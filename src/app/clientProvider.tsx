@@ -12,7 +12,13 @@ export default function ClientProvider({ children }: { readonly children: React.
 
 
     return (
-        <ConfigProvider theme={theme}>
+        <ConfigProvider theme={{
+          ...theme,
+          token: {
+            fontFamily: 'var(--font-sans)',
+            fontFamilyCode: 'var(--font-mono)'
+          }
+        }}>
             <AntdRegistry>{children}</AntdRegistry>
         </ConfigProvider>
     );

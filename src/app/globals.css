@@ -5,6 +5,38 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  --bole-100: #170d0a;
+  --bole-200: #2d1a14;
+  --bole-300: #44271e;
+  --bole-400: #553025;
+  --bole-500: #704031;
+  --bole-600: #8E513E;
+  --bole-700: #BB7763;
+  --bole-800: #D3A99C;
+  --bole-850: #ECDAD4;
+  --bole-900: #F9F3F1;
+  --satin_gold-100: #231C06;
+  --satin_gold-200: #57450F;
+  --satin_gold-300: #8B6E18;
+  --satin_gold-400: #AD8A1F;
+  --satin_gold-500: #d0a525;
+  --satin_gold-600: #E0BD52;
+  --satin_gold-700: #EAD186;
+  --satin_gold-800: #F3E4BA;
+  --satin_gold-900: #FCF8EE; 
+  --jet-100: #09090a;
+  --jet-200: #131314;
+  --jet-300: #1c1c1e;
+  --jet-400: #262628;
+  --jet-500: #2f2f31;
+  --jet-600: #58585c;
+  --jet-700: #818186;
+  --jet-800: #ababae;
+  --jet-900: #d5d5d7;
+  --font-sans: 'Inter';
+  --font-serif: 'Bitter';
+  --font-mono: 'JetBrains Mono';
 }
 
 :root[data-theme='dark'] {
@@ -17,4 +49,14 @@ body {
   background: var(--background);
   min-height: 100vh;
   transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-sans);
+  }
+}
+
+.container {
+  @apply mx-auto w-full max-w-7xl px-6 md:px-8;
 }

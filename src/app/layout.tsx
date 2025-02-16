@@ -1,18 +1,5 @@
-
 import React from "react";
-import { Geist, Geist_Mono } from "next/font/google";
 import ClientProvider from "./clientProvider";
-
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
 
 export const metadata = {
     title: "HHH Community",
@@ -30,8 +17,14 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-      <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-        <body>
+      <html lang="en">
+        <head>
+          <link
+            rel="stylesheet"
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Bitter:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:wght@100..700&display=swap"
+          />
+        </head>
+        <body className="min-h-screen bg-background bg-[url('/bg-site.jpg')] bg-repeat dark:bg-none transition-colors duration-200">
           <ClientProvider>{children}</ClientProvider>
         </body>
       </html>
