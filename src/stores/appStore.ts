@@ -55,11 +55,20 @@ const darkTheme: ThemeConfig = {
 const useAppStore = create<AppState>((set) => ({
     isDarkMode: false,
     theme: lightTheme,
-    toggleDarkMode: () =>
-        set((state) => ({
-            isDarkMode: !state.isDarkMode,
-            theme: state.isDarkMode ? lightTheme : darkTheme,
-        })),
+    toggleDarkMode: () => {
+        set((state) => {
+            const isDarkMode = !state.isDarkMode;
+            document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+            return {
+                isDarkMode: isDarkMode,
+                theme: isDarkMode ? darkTheme : lightTheme,
+            };
+        });
+    },
 }));
+
+if (typeof document !== 'undefined') {
+    document.documentElement.setAttribute('data-theme', useAppStore.getState().isDarkMode ? 'dark' : 'light');
+}
 
 export default useAppStore;
