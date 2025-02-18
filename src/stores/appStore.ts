@@ -42,6 +42,8 @@ const lightTheme: ThemeConfig = {
     algorithm: theme.defaultAlgorithm,
     token: {
         colorPrimary: bole500,
+        fontFamily: 'var(--font-sans)',
+        fontFamilyCode: 'var(--font-mono)'
     },
 };
 
@@ -49,6 +51,8 @@ const darkTheme: ThemeConfig = {
     algorithm: theme.darkAlgorithm,
     token: {
         colorPrimary: satinGold600,
+        fontFamily: 'var(--font-sans)',
+        fontFamilyCode: 'var(--font-mono)'
     },
 };
 
