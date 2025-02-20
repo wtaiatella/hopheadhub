@@ -40,6 +40,12 @@
     --background: var(--bole-900);
     --foreground: var(--bole-200);
 
+    --primary: var(--bole-500);
+    --primary-foreground: var(--bole-900);
+
+    --secondary: var(--bole-700);
+    --secondary-foreground: var(--bole-200);
+
     --card: var(--bole-900);
     --card-foreground: var(--bole-200);
 
@@ -52,6 +58,8 @@
 
     --gradient-from: var(--bole-800);
     --gradient-to: var(--bole-400);
+
+    --radius: 0.5rem;
   }
 
   :root[data-theme='dark'] {
