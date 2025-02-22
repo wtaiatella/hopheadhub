@@ -6,9 +6,13 @@ interface CategoryCardProps {
    categoryGroupDescription: string
 }
 
-export default function CategoryCard({ imagePath, categoryGroupName, categoryGroupDescription }: CategoryCardProps) {
+export default function CategoryCard({
+   imagePath,
+   categoryGroupName,
+   categoryGroupDescription,
+}: CategoryCardProps) {
    return (
-      <div className="w-48 flex flex-col items-center justify-center">
+      <div className="w-48 flex flex-col items-center justify-center cursor-pointer">
          <Image
             src={imagePath}
             className="w-full h-36 object-cover rounded-2xl overflow-hidden"
