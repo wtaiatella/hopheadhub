@@ -3,84 +3,108 @@
 @tailwind utilities;
 
 @layer base {
-  :root {
+   :root {
+      --bole-100: #170d0a;
+      --bole-200: #2d1a14;
+      --bole-300: #44271e;
+      --bole-400: #553025;
+      --bole-500: #704031;
+      --bole-600: #8e513e;
+      --bole-700: #bb7763;
+      --bole-800: #d3a99c;
+      --bole-850: #ecdad4;
+      --bole-900: #f9f3f1;
+      --satin_gold-100: #231c06;
+      --satin_gold-200: #57450f;
+      --satin_gold-300: #8b6e18;
+      --satin_gold-400: #ad8a1f;
+      --satin_gold-500: #d0a525;
+      --satin_gold-600: #e0bd52;
+      --satin_gold-700: #ead186;
+      --satin_gold-800: #f3e4ba;
+      --satin_gold-900: #fcf8ee;
+      --jet-100: #09090a;
+      --jet-200: #131314;
+      --jet-300: #1c1c1e;
+      --jet-400: #262628;
+      --jet-500: #2f2f31;
+      --jet-600: #58585c;
+      --jet-700: #818186;
+      --jet-800: #ababae;
+      --jet-900: #d5d5d7;
+      --font-sans: 'Inter';
+      --font-serif: 'Bitter';
+      --font-mono: 'JetBrains Mono';
 
-    --bole-100: #170d0a;
-    --bole-200: #2d1a14;
-    --bole-300: #44271e;
-    --bole-400: #553025;
-    --bole-500: #704031;
-    --bole-600: #8E513E;
-    --bole-700: #BB7763;
-    --bole-800: #D3A99C;
-    --bole-850: #ECDAD4;
-    --bole-900: #F9F3F1;
-    --satin_gold-100: #231C06;
-    --satin_gold-200: #57450F;
-    --satin_gold-300: #8B6E18;
-    --satin_gold-400: #AD8A1F;
-    --satin_gold-500: #d0a525;
-    --satin_gold-600: #E0BD52;
-    --satin_gold-700: #EAD186;
-    --satin_gold-800: #F3E4BA;
-    --satin_gold-900: #FCF8EE; 
-    --jet-100: #09090a;
-    --jet-200: #131314;
-    --jet-300: #1c1c1e;
-    --jet-400: #262628;
-    --jet-500: #2f2f31;
-    --jet-600: #58585c;
-    --jet-700: #818186;
-    --jet-800: #ababae;
-    --jet-900: #d5d5d7;
-    --font-sans: 'Inter';
-    --font-serif: 'Bitter';
-    --font-mono: 'JetBrains Mono';
+      --background: var(--bole-900);
+      --foreground: var(--bole-200);
 
-    --background: var(--bole-900);
-    --foreground: var(--bole-200);
+      --primary: var(--bole-500);
+      --primary-foreground: var(--bole-900);
 
-    --primary: var(--bole-500);
-    --primary-foreground: var(--bole-900);
+      --secondary: var(--bole-700);
+      --secondary-foreground: var(--bole-200);
 
-    --secondary: var(--bole-700);
-    --secondary-foreground: var(--bole-200);
+      --card: var(--bole-900);
+      --card-foreground: var(--bole-200);
 
-    --card: var(--bole-900);
-    --card-foreground: var(--bole-200);
+      --header-background: var(--bole-300);
+      --header-menu: var(--bole-300);
+      --header-text: var(--satin_gold-800);
+      --header-hover: var(--satin_gold-500);
 
-    --header-background: var(--bole-300);
-    --header-menu: var(--bole-300);
-    --header-text: var(--satin_gold-800);
-    --header-hover: var(--satin_gold-500);
+      --highlight: var(--satin_gold-500);
 
-    --highlight: var(--satin_gold-500);
+      --gradient-from: var(--bole-800);
+      --gradient-to: var(--bole-400);
 
-    --gradient-from: var(--bole-800);
-    --gradient-to: var(--bole-400);
+      --radius: 0.5rem;
+      --calendar-icon-color: var(--primary);
+      --calendar-icon-size: 1.5rem;
+   }
 
-    --radius: 0.5rem;
-  }
-
-  :root[data-theme='dark'] {
-    --background: #1c1c1e;
-    --foreground: #ffffff;
-  }
+   :root[data-theme='dark'] {
+      --background: #1c1c1e;
+      --foreground: #ffffff;
+   }
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  min-height: 100vh;
-  transition: background-color 0.3s ease, color 0.3s ease;
+   color: var(--foreground);
+   background: var(--background);
+   min-height: 100vh;
+   transition:
+      background-color 0.3s ease,
+      color 0.3s ease;
 }
 
 @layer base {
-  body {
-    font-family: var(--font-sans);
-  }
+   body {
+      font-family: var(--font-sans);
+   }
 }
 
 .container {
-  @apply mx-auto w-full max-w-7xl px-6 md:px-8;
+   @apply mx-auto w-full max-w-7xl px-6 md:px-8;
+}
+
+/* DatePicker custom styles */
+.custom-datepicker {
+   .ant-picker {
+      padding: 0px 3px !important;
+   }
+   .ant-picker-input {
+      input {
+         width: 0 !important;
+         min-width: 0px !important;
+      }
+   }
+   .ant-picker-suffix {
+      margin-inline-start: 0px !important;
+      color: var(--calendar-icon-color) !important;
+      svg {
+         width: var(--calendar-icon-size) !important;
+         height: var(--calendar-icon-size) !important;
+      }
+   }
 }
