@@ -1,27 +1,49 @@
 'use client'
-import { Button, message, Steps, Form } from 'antd'
+import { Button, message, Steps, Form, Divider } from 'antd'
 import React from 'react'
 import { useState } from 'react'
 
-import userInfo from './userInfo'
-import loginInfo from './loginInfo'
+import UserInfo from './userInfo'
+import LoginInfo from './loginInfo'
 
-const steps = [
+// Define step structure
+interface StepItem {
+   title: string
+   content: React.FC
+}
+
+// Define form values structure
+interface SignupFormValues {
+   // User info
+   name: string
+   nickname?: string
+   phone: string
+   birthDate: Date
+   city: string
+   state: string
+
+   // Login info
+   email: string
+   password: string
+   confirmPassword: string
+}
+
+const steps: StepItem[] = [
    {
-      title: 'Sign up - Basic info',
-      content: userInfo,
+      title: 'Personal Information',
+      content: UserInfo,
    },
    {
-      title: 'Sign up - Login info',
-      content: loginInfo,
+      title: 'Login Information',
+      content: LoginInfo,
    },
 ]
 
-export default function Signup() {
-   const [currentStep, setCurrentStep] = useState(0)
-   const [signupForm] = Form.useForm()
+export default function Signup(): React.ReactElement {
+   const [currentStep, setCurrentStep] = useState<number>(0)
+   const [signupForm] = Form.useForm<SignupFormValues>()
 
-   const handleNextStep = async () => {
+   const handleNextStep = async (): Promise<void> => {
       try {
          await signupForm.validateFields()
          setCurrentStep(currentStep + 1)
@@ -30,17 +52,19 @@ export default function Signup() {
       }
    }
 
-   const handlePrevStep = () => {
+   const handlePrevStep = (): void => {
       setCurrentStep(currentStep - 1)
    }
 
-   const handleFinish = async () => {
+   const handleFinish = async (): Promise<void> => {
       try {
          const values = await signupForm.validateFields()
          console.log('Sent Form with values:', values)
-         console.log('Todos os valores', signupForm.getFieldsValue())
+         message.success('Registration completed successfully!')
+         // Here you can add logic to send data to the server
       } catch (error) {
-         console.log('Fail to validate or send form:', error)
+         console.log('Failed to validate or send form:', error)
+         message.error('Error during registration. Please try again.')
       }
    }
 
@@ -50,32 +74,50 @@ export default function Signup() {
 
    return (
       <>
-         <div className="flex items-center justify-center bg-[url(/assets/cheers-at-sun-set.jpeg)] bg-center bg-cover bg-no-repeat" />
+         <div className="flex items-start justify-center h-full bg-[url(/assets/cheers-at-sun-set.jpeg)] bg-center bg-cover bg-no-repeat">
+            <h1 className="text-6xl font-bold text-white mt-24">Hop Head Hub</h1>
+         </div>
 
          <div className="bg-background px-24 py-8">
             <div className="flex items-center justify-end mb-8">
-               <a href="./">home</a>
+               <a href="./" className="text-primary hover:underline">
+                  Home
+               </a>
             </div>
-            <h1 className="text-4xl font-bold text-primary">Welcome to your beer community!</h1>
+            <h1 className="text-4xl font-bold text-primary mb-6">
+               Welcome to your beer community!
+            </h1>
 
-            <Steps current={currentStep} items={stepTitles} />
-            <Form form={signupForm} layout="vertical" onFinish={handleFinish}>
-               <CurrentStepContent />
+            <Steps current={currentStep} items={stepTitles} className="mb-8" />
 
-               <div className="flex items-center justify-start mt-4 gap-4">
-                  {currentStep < steps.length - 1 && (
-                     <Button type="primary" onClick={() => handleNextStep()}>
-                        Next
-                     </Button>
-                  )}
-                  {currentStep === steps.length - 1 && (
-                     <Button type="primary" htmlType="submit">
-                        Sign up
-                     </Button>
-                  )}
-                  {currentStep > 0 && <Button onClick={() => handlePrevStep()}>Previous</Button>}
-               </div>
-            </Form>
+            <div className="bg-white p-6 rounded-lg shadow-md">
+               <Form form={signupForm} layout="vertical" onFinish={handleFinish}>
+                  <CurrentStepContent />
+
+                  <div className="flex items-center justify-start mt-8 gap-4">
+                     {currentStep < steps.length - 1 && (
+                        <Button type="primary" onClick={() => handleNextStep()}>
+                           Next
+                        </Button>
+                     )}
+                     {currentStep === steps.length - 1 && (
+                        <Button type="primary" htmlType="submit">
+                           Complete Registration
+                        </Button>
+                     )}
+                     {currentStep > 0 && <Button onClick={() => handlePrevStep()}>Back</Button>}
+                  </div>
+               </Form>
+            </div>
+
+            <div className="mt-6 text-center">
+               <p>
+                  Already have an account?{' '}
+                  <a href="/signin" className="text-primary hover:underline">
+                     Sign in here
+                  </a>
+               </p>
+            </div>
          </div>
       </>
    )
