@@ -108,3 +108,19 @@ body {
       }
    }
 }
+
+/* Radio Group custom styles */
+.ant-radio-group {
+   width: 100% !important;
+}
+
+.ant-radio-wrapper {
+   width: 100% !important;
+   display: block !important;
+}
+
+/* nickname_help custom styles */
+#nickname_help {
+   @apply text-primary;
+   font-size: 12px;
+}

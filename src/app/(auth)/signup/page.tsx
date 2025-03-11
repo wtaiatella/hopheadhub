@@ -94,7 +94,7 @@ export default function Signup(): React.ReactElement {
                <Form form={signupForm} layout="vertical" onFinish={handleFinish}>
                   <CurrentStepContent />
 
-                  <div className="flex items-center justify-start mt-8 gap-4">
+                  <div className="flex items-center justify-start mt-4 gap-4">
                      {currentStep < steps.length - 1 && (
                         <Button type="primary" onClick={() => handleNextStep()}>
                            Next

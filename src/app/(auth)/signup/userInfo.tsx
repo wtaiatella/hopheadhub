@@ -36,6 +36,24 @@ export default function UserInfo(): React.ReactElement {
             <Input placeholder="Enter your nickname" />
          </Form.Item>
 
+         <div className="pt-2">
+            <Form.Item
+               name="email"
+               label="Email"
+               layout="horizontal"
+               preserve={true}
+               rules={[
+                  {
+                     required: true,
+                     message: 'Please enter your email!',
+                  },
+                  { type: 'email', message: 'Please enter a valid email!' },
+               ]}
+            >
+               <Input placeholder="Enter your email" />
+            </Form.Item>
+         </div>
+
          <div className="grid grid-cols-2 items-center gap-4">
             <Form.Item
                name="city"
@@ -112,7 +130,7 @@ export default function UserInfo(): React.ReactElement {
 
          <Form.Item name="beerInterest" label="What is your beer interest?" preserve={true}>
             <Select
-               placeholder="Select your state"
+               placeholder="Select your beer interests"
                mode="tags"
                tokenSeparators={[',']}
                options={[

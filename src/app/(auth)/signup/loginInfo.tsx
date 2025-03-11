@@ -1,7 +1,7 @@
 'use client'
 
-import { Form, Input, Button, Divider } from 'antd'
-import React from 'react'
+import { Form, Input, Button, Divider, Radio, RadioChangeEvent } from 'antd'
+import React, { useState } from 'react'
 import Image from 'next/image'
 
 // Define interface for login information
@@ -12,11 +12,19 @@ interface LoginInfo {
 }
 
 export default function LoginInfo(): React.ReactElement {
+   const [valueLoginMethod, setValueLoginMethod] = useState<number | null>(null)
+
+   const onChangeLoginMethod = (e: RadioChangeEvent) => {
+      setValueLoginMethod(e.target.value)
+   }
+
    return (
       <>
-         <div className="mb-8">
-            <p className="text-lg mb-4">Here you can choose how to sign up</p>
-            <p className="text-lg mb-4">You can sign up using your social accounts:</p>
+         <div className="mb-6">
+            <p className="mb-4 w-full text-center text-2xl font-bold text-primary">
+               Here you can choose how to sign up
+            </p>
+            <p className="mb-2">You can sign up using your social accounts:</p>
             <div className="flex items-center gap-4">
                <Button type="default" className="flex items-center gap-2">
                   <Image src="/assets/icons/google.png" alt="Google" width={20} height={20} />
@@ -27,49 +35,52 @@ export default function LoginInfo(): React.ReactElement {
                   <p>Sign up with Facebook</p>
                </Button>
             </div>
-            <Divider>OR</Divider>
          </div>
-         <Form.Item
-            name="email"
-            label="Email"
-            preserve={true}
-            rules={[
-               { required: true, message: 'Please enter your email!' },
-               { type: 'email', message: 'Please enter a valid email!' },
-            ]}
-         >
-            <Input placeholder="Enter your email" />
+         <Divider>OR</Divider>
+
+         <Form.Item>
+            <Radio.Group name="loginMethod" onChange={onChangeLoginMethod} value={valueLoginMethod}>
+               <Radio value={1}>Receive a login link in your email</Radio>
+               <Divider>OR</Divider>
+               <Radio value={2}>Use email and password method</Radio>
+            </Radio.Group>
          </Form.Item>
-         <Form.Item
-            name="password"
-            label="Password"
-            preserve={true}
-            rules={[
-               { required: true, message: 'Please enter your password!' },
-               { min: 8, message: 'Password must be at least 8 characters!' },
-            ]}
-         >
-            <Input.Password placeholder="Enter your password" />
-         </Form.Item>
-         <Form.Item
-            name="confirmPassword"
-            label="Confirm Password"
-            preserve={true}
-            dependencies={['password']}
-            rules={[
-               { required: true, message: 'Please confirm your password!' },
-               ({ getFieldValue }) => ({
-                  validator(_, value) {
-                     if (!value || getFieldValue('password') === value) {
-                        return Promise.resolve()
-                     }
-                     return Promise.reject(new Error('The passwords do not match!'))
+         <div className="flex gap-4">
+            <Form.Item
+               name="password"
+               label="Password"
+               preserve={true}
+               rules={[
+                  {
+                     /*required: true, message: 'Please enter your password!' */
                   },
-               }),
-            ]}
-         >
-            <Input.Password placeholder="Confirm your password" />
-         </Form.Item>
+                  { min: 4, message: 'Password must be at least 8 characters!' },
+               ]}
+            >
+               <Input.Password placeholder="Enter your password" />
+            </Form.Item>
+            <Form.Item
+               name="confirmPassword"
+               label="Confirm Password"
+               preserve={true}
+               dependencies={['password']}
+               rules={[
+                  {
+                     /* required: true, message: 'Please confirm your password!' */
+                  },
+                  ({ getFieldValue }) => ({
+                     validator(_, value) {
+                        if (!value || getFieldValue('password') === value) {
+                           return Promise.resolve()
+                        }
+                        return Promise.reject(new Error('The passwords do not match!'))
+                     },
+                  }),
+               ]}
+            >
+               <Input.Password placeholder="Confirm your password" />
+            </Form.Item>
+         </div>
       </>
    )
 }
