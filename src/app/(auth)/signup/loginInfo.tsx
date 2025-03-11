@@ -15,6 +15,7 @@ export default function LoginInfo(): React.ReactElement {
    return (
       <>
          <div className="mb-8">
+            <p className="text-lg mb-4">Here you can choose how to sign up</p>
             <p className="text-lg mb-4">You can sign up using your social accounts:</p>
             <div className="flex items-center gap-4">
                <Button type="default" className="flex items-center gap-2">

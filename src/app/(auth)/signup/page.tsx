@@ -75,22 +75,22 @@ export default function Signup(): React.ReactElement {
    return (
       <>
          <div className="flex items-start justify-center h-full bg-[url(/assets/cheers-at-sun-set.jpeg)] bg-center bg-cover bg-no-repeat">
-            <h1 className="text-6xl font-bold text-white mt-24">Hop Head Hub</h1>
+            <h1 className="text-6xl font-bold text-white mt-20">Hop Head Hub</h1>
          </div>
 
-         <div className="bg-background px-24 py-8">
-            <div className="flex items-center justify-end mb-8">
+         <div className="bg-background px-12 py-8">
+            <div className="flex items-center justify-end">
                <a href="./" className="text-primary hover:underline">
                   Home
                </a>
             </div>
-            <h1 className="text-4xl font-bold text-primary mb-6">
+            <h1 className="text-3xl font-bold text-primary my-8">
                Welcome to your beer community!
             </h1>
 
-            <Steps current={currentStep} items={stepTitles} className="mb-8" />
+            <Steps current={currentStep} items={stepTitles} />
 
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="bg-white p-6 mt-8 rounded-lg shadow-md">
                <Form form={signupForm} layout="vertical" onFinish={handleFinish}>
                   <CurrentStepContent />
 
@@ -110,7 +110,7 @@ export default function Signup(): React.ReactElement {
                </Form>
             </div>
 
-            <div className="mt-6 text-center">
+            <div className="text-center mt-2">
                <p>
                   Already have an account?{' '}
                   <a href="/signin" className="text-primary hover:underline">
