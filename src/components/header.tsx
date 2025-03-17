@@ -10,7 +10,7 @@ export default function Header() {
    const [selected, setSelected] = useState('')
 
    return (
-      <header className="fixed w-full z-10 bg-header-background">
+      <header className="fixed top-0 right-0 left-0 w-full z-10 bg-header-background">
          <div className="container mx-auto px-4 ">
             <nav className="flex align-center justify-between text-2xl text-header-text  items-center">
                <Link href="/" className="my-3" onClick={() => setSelected('')}>

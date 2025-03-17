@@ -68,6 +68,8 @@ export default {
             '76': '304px',
             '114': '456px',
             '120': '480px',
+            header: '120px',
+            'header-sm': '100px',
          },
          gridTemplateColumns: {
             auth: '1.5fr 2fr',
