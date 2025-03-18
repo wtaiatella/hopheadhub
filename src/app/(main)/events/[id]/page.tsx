@@ -11,7 +11,7 @@ import {
    MapIcon,
 } from '@/components/icons'
 import Title from '@/components/commom/title'
-import { MapWrapper } from '@/components/map'
+import { EventMap } from '@/components/map'
 
 export default function Events() {
    // Example address - you would typically get this from your event data
@@ -107,7 +107,7 @@ export default function Events() {
             </div>
          </div>
          <div className="mt-8">
-            <MapWrapper
+            <EventMap
                address={eventAddress}
                height="400px"
                className="rounded-lg border border-gray-200 overflow-hidden"

@@ -1,4 +1,3 @@
-import MapComponent from './GoogleMap';
-import MapWrapper from './MapWrapper';
+import EventMap from './GoogleMap'
 
-export { MapComponent, MapWrapper };
+export { EventMap }
