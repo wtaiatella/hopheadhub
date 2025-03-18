@@ -10,6 +10,9 @@
 !.yarn/releases
 !.yarn/versions
 
+# pnpm
+pnpm-lock.yaml
+
 # testing
 /coverage
 
@@ -43,3 +46,6 @@ next-env.d.ts
 
 # Jetbrains WebStorm
 .idea/
+
+# windsurf
+.windsurfrules
