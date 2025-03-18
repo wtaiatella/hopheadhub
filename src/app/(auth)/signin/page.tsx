@@ -9,15 +9,32 @@ in non-secure environments.
  */
 
 'use client'
+import { getRecaptchaSiteKey } from '@/app/action/env'
 import { Button, Divider, Form, Input, Checkbox, FormInstance } from 'antd'
 import Image from 'next/image'
-import React from 'react'
-import { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
 
-export default function Login() {
+const Login = () => {
    const [form] = Form.useForm()
    const [captchaVerified, setCaptchaVerified] = useState(false) // State to track captcha
+   const [recaptchaSiteKey, setRecaptchaSiteKey] = useState<string>('') // State for the reCAPTCHA site key
+
+   // Fetch the reCAPTCHA site key on component mount
+   useEffect(() => {
+      const fetchSiteKey = async () => {
+         try {
+            const result = await getRecaptchaSiteKey()
+            if (result.success && result.siteKey) {
+               setRecaptchaSiteKey(result.siteKey)
+            }
+         } catch (error) {
+            console.error('Failed to fetch reCAPTCHA site key:', error)
+         }
+      }
+
+      fetchSiteKey()
+   }, [])
 
    // Handle reCAPTCHA verification
    const onCaptchaChange = async (value: string | null) => {
@@ -130,10 +147,9 @@ export default function Login() {
                      <Input placeholder="enter your email" type="email" />
                   </Form.Item>
                   <div className="my-4">
-                     <ReCAPTCHA
-                        sitekey="6Lcz0uUqAAAAAE4BioyX8cNomSj33fIznJYcnWaj" // Replace with your reCAPTCHA site key
-                        onChange={onCaptchaChange}
-                     />
+                     {recaptchaSiteKey && (
+                        <ReCAPTCHA sitekey={recaptchaSiteKey} onChange={onCaptchaChange} />
+                     )}
                   </div>
                   <Form.Item>
                      <SubmitButton form={form}>Submit</SubmitButton>
@@ -148,3 +164,5 @@ export default function Login() {
       </>
    )
 }
+
+export default Login
