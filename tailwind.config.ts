@@ -73,6 +73,7 @@ export default {
          },
          gridTemplateColumns: {
             auth: '1.5fr 2fr',
+            event: '2fr 1fr',
          },
       },
    },
