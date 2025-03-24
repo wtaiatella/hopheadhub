@@ -18,6 +18,8 @@ model User {
   company       String?
   beerInterests String[]       // Array of beer interests
   profileImage  String?
+  hashedPassword String?       // Securely hashed password
+  salt          String?        // Salt used for password hashing
   createdAt     DateTime       @default(now())
   updatedAt     DateTime       @updatedAt
   
@@ -27,6 +29,7 @@ model User {
   addresses     Address[]
   createdEvents Event[]        @relation("EventCreator")
   bookings      Booking[]
+  accounts      Account[]      // Social media accounts
 }
 
 model Email {
@@ -120,4 +123,27 @@ model Booking {
 
   @@index([userId])
   @@index([eventId])
+}
+
+// Social login accounts
+model Account {
+  id                String   @id @default(cuid())
+  userId            String
+  type              String   // oauth, email, etc.
+  provider          String   // google, apple, facebook, etc.
+  providerAccountId String   // ID from the provider
+  refresh_token     String?  @db.Text
+  access_token      String?  @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?  @db.Text
+  session_state     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
 }

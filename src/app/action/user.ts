@@ -2,6 +2,7 @@
 
 import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
+import { PrismaClient, Prisma } from '@prisma/client'
 
 /**
  * Create a new user with a main email address
@@ -16,7 +17,7 @@ export async function createUser(data: {
 }) {
   try {
     // Create user and their main email in a transaction
-    const user = await prisma.$transaction(async (tx) => {
+    const user = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // Create the user
       const newUser = await tx.user.create({
         data: {
@@ -104,7 +105,7 @@ export async function updateUserProfile(userId: string, data: {
 export async function addUserEmail(userId: string, email: string, setAsMain: boolean = false) {
   try {
     // Begin transaction
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // If setting as main, update all existing emails to not be main
       if (setAsMain) {
         await tx.email.updateMany({
@@ -137,7 +138,7 @@ export async function addUserEmail(userId: string, email: string, setAsMain: boo
 export async function addUserPhoneNumber(userId: string, phoneNumber: string, setAsMain: boolean = false) {
   try {
     // Begin transaction
-    await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       // If setting as main, update all existing phone numbers to not be main
       if (setAsMain) {
         await tx.phoneNumber.updateMany({
