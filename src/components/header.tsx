@@ -15,7 +15,7 @@ export default function Header() {
             <nav className="flex align-center justify-between text-2xl text-header-text  items-center">
                <Link href="/" className="my-3" onClick={() => setSelected('')}>
                   <Image
-                     src="/logo-yellow.png"
+                     src="/assets/logo-yellow.png"
                      className="2sm:h-24 2sm:w-36 h-16 w-24 cursor-pointer"
                      width={768}
                      height={512}
