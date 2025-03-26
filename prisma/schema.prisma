@@ -12,8 +12,10 @@ datasource db {
 
 model User {
   id            String         @id @default(cuid())
-  name          String?
-  nickname      String?
+  name          String
+  nickname      String
+  city          String
+  state         String
   website       String?
   company       String?
   beerInterests String[]       // Array of beer interests
@@ -25,11 +27,11 @@ model User {
   
   // Relations
   emails        Email[]
-  phoneNumbers  PhoneNumber[]
-  addresses     Address[]
-  createdEvents Event[]        @relation("EventCreator")
-  bookings      Booking[]
-  accounts      Account[]      // Social media accounts
+  phoneNumbers  PhoneNumber[]?
+  addresses     Address[]?
+  createdEvents Event[]?        @relation("EventCreator")
+  bookings      Booking[]?
+  accounts      Account[]?      // Social media accounts
 }
 
 model Email {
