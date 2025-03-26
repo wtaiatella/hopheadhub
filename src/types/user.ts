@@ -1,14 +1,17 @@
 import { z } from 'zod'
 
 export const emailSchema = z.object({
+   id: z.string().optional(),
    email: z.string().email(),
    verified: z.boolean(),
    isMain: z.boolean(),
+   userId: z.string(),
 })
 
 export type Email = z.infer<typeof emailSchema>
 
 export const phoneNumberSchema = z.object({
+   id: z.string().optional(),
    phoneNumber: z.string(),
    verified: z.boolean(),
    isMain: z.boolean(),
@@ -18,6 +21,7 @@ export const phoneNumberSchema = z.object({
 export type PhoneNumber = z.infer<typeof phoneNumberSchema>
 
 export const addressSchema = z.object({
+   id: z.string().optional(),
    name: z.string(),
    street: z.string(),
    number: z.string().optional(),
@@ -26,6 +30,7 @@ export const addressSchema = z.object({
    city: z.string(),
    state: z.string(),
    country: z.string(),
+   eventId: z.string().optional(),
    userId: z.string(),
 })
 

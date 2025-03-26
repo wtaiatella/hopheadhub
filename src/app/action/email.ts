@@ -7,14 +7,15 @@ import { Email } from '@/types/user'
  */
 export async function addUserEmail(userId: string, email: Email) {
    try {
-      await prisma.email.create({
+      const newEmail = await prisma.email.create({
          data: {
-            ...email,
+            email: email.email,
+            verified: email.verified,
+            isMain: email.isMain,
             userId,
          },
       })
-
-      return { success: true }
+      return { success: true, email: newEmail }
    } catch (error) {
       console.error('Error adding email:', error)
       return { success: false, error: 'Failed to add email' }
@@ -24,14 +25,17 @@ export async function addUserEmail(userId: string, email: Email) {
 /**
  * Update an email from user
  */
-export async function updateUserEmail(userId: string, email: Email) {
+export async function updateUserEmail(email: Email) {
    try {
-      await prisma.email.update({
-         where: { email: email.email, userId },
-         data: { ...email },
+      const updatedEmail = await prisma.email.update({
+         where: { id: email.id },
+         data: {
+            email: email.email,
+            verified: email.verified,
+            isMain: email.isMain,
+         },
       })
-
-      return { success: true }
+      return { success: true, email: updatedEmail }
    } catch (error) {
       console.error('Error updating email:', error)
       return { success: false, error: 'Failed to update email' }
@@ -41,13 +45,12 @@ export async function updateUserEmail(userId: string, email: Email) {
 /**
  * Delete an email from user
  */
-export async function deleteEmail(userId: string, email: string) {
+export async function deleteEmail(emailId: string) {
    try {
-      await prisma.email.delete({
-         where: { email, userId },
+      const deletedEmail = await prisma.email.delete({
+         where: { id: emailId },
       })
-
-      return { success: true }
+      return { success: true, email: deletedEmail }
    } catch (error) {
       console.error('Error deleting email:', error)
       return { success: false, error: 'Failed to delete email' }

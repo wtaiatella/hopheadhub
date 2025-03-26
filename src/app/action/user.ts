@@ -48,16 +48,12 @@ export async function getUserById(
             emails: true,
             phoneNumbers: true,
             addresses: true,
-            createdEvents: true,
-            bookings: true,
-            accounts: true,
          },
       })
 
       if (!user) {
          return { success: false, error: 'User not found' }
       }
-
       return { success: true, user }
    } catch (error) {
       console.error('Error fetching user:', error)
