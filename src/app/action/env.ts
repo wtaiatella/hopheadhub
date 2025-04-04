@@ -26,3 +26,11 @@ export async function getGoogleMapsApiKey() {
    // Return result to client
    return { success: true, apiKey: apiKey }
 }
+
+export async function getJwtSecret() {
+   // Access environment variables
+   const secret = process.env.JWT_SECRET
+
+   // Return result to client
+   return { success: true, secret: secret }
+}

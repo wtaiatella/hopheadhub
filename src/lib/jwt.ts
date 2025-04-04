@@ -1,44 +1,58 @@
-import jwt from 'jsonwebtoken';
-
-// JWT secret key - in production, this should be stored in environment variables
-const JWT_SECRET = process.env.JWT_SECRET || 'hop-head-hub-jwt-secret-key-change-in-production';
+import jwt from 'jsonwebtoken'
+import { getJwtSecret } from '@/app/action/env'
 
 // Token expiration time
-const EXPIRES_IN = '7d'; // 7 days
+const EXPIRES_IN = '7d' // 7 days
 
 export interface JwtPayload {
-  userId: string;
-  email?: string;
-  iat?: number;
-  exp?: number;
+   userId: string
+   email: string
 }
 
 /**
  * Generate a JWT token for a user
  */
-export function generateToken(payload: JwtPayload): string {
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: EXPIRES_IN });
+export async function generateToken(payload: JwtPayload): Promise<string> {
+   const secret = (await getJwtSecret()).secret
+
+   if (!secret) {
+      throw new Error('JWT secret is not defined')
+   }
+
+   return jwt.sign(payload, secret, { expiresIn: EXPIRES_IN })
 }
 
 /**
  * Verify a JWT token and return the payload
  */
-export function verifyToken(token: string): JwtPayload | null {
-  try {
-    return jwt.verify(token, JWT_SECRET) as JwtPayload;
-  } catch (error) {
-    console.error('JWT verification error:', error);
-    return null;
-  }
+export async function verifyToken(token: string): Promise<JwtPayload | null> {
+   const secret = (await getJwtSecret()).secret
+
+   if (!secret) {
+      throw new Error('JWT secret is not defined')
+   }
+
+   try {
+      return jwt.verify(token, secret) as JwtPayload
+   } catch (error) {
+      console.error('JWT verification error:', error)
+      return null
+   }
 }
 
 /**
  * Extract JWT token from authorization header
  */
-export function extractTokenFromHeader(authHeader?: string): string | null {
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
-    return null;
-  }
-  
-  return authHeader.substring(7); // Remove 'Bearer ' prefix
+export async function extractTokenFromHeader(authHeader?: string): Promise<string | null> {
+   const secret = (await getJwtSecret()).secret
+
+   if (!secret) {
+      throw new Error('JWT secret is not defined')
+   }
+
+   if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      return null
+   }
+
+   return authHeader.substring(7) // Remove 'Bearer ' prefix
 }

@@ -1,6 +1,7 @@
 import { create } from 'zustand'
-import { User } from '@/types/user'
-import { RegisterUserInput, LoginUserInput } from '@/types/register'
+import { User, UserCreate, UserSignin } from '@/types/user'
+import * as userAction from '@/app/action/user'
+import * as authAction from '@/app/action/auth'
 
 interface UserState {
    user: User | null
@@ -8,10 +9,22 @@ interface UserState {
    error: string | null
 
    // Auth actions
-   register: (data: RegisterUserInput) => Promise<{ success: boolean; error?: string }>
-   login: (data: LoginUserInput) => Promise<{ success: boolean; error?: string }>
-   logout: () => Promise<void>
-   fetchCurrentUser: () => Promise<void>
+   signup: (data: UserCreate) => Promise<{ success: boolean; error?: string }>
+   signin: (data: UserSignin) => Promise<{ success: boolean; error?: string }>
+   signout: () => Promise<void>
+   fetchCurrentUser: () => Promise<{ success: boolean; error?: string }>
+
+   // User profile actions
+   updateProfile: (data: {
+      name?: string
+      nickname?: string
+      city?: string
+      state?: string
+      website?: string
+      company?: string
+      beerInterests?: string[]
+      profileImage?: string
+   }) => Promise<{ success: boolean; error?: string }>
 
    // State management
    setUser: (user: User | null) => void
@@ -25,65 +38,48 @@ export const useUserStore = create<UserState>((set, get) => ({
    error: null,
 
    // Auth actions
-   register: async (data: RegisterUserInput) => {
-      set({ isLoading: true, error: null })
+   signup: async (data: UserCreate) => {
       try {
-         const response = await fetch('/api/auth/register', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-         })
-
-         const result = await response.json()
-
-         if (!result.success) {
-            set({ error: result.error || 'Registration failed', isLoading: false })
-            return { success: false, error: result.error }
-         }
-
-         // Fetch user data after successful registration
-         await get().fetchCurrentUser()
+         set({ isLoading: true, error: null })
+         // Check if user exists by email
+         await userAction.isUserExistsByEmail(data.email)
+         // Use the action to signup the user
+         await userAction.createUserProfile(data)
          return { success: true }
       } catch (error) {
-         const errorMessage = error instanceof Error ? error.message : 'Registration failed'
-         set({ error: errorMessage, isLoading: false })
-         return { success: false, error: errorMessage }
+         console.error('Error creating user:', error)
+         throw new Error('Failed to create user')
+      } finally {
+         set({ isLoading: false })
       }
    },
 
-   login: async (data: LoginUserInput) => {
-      set({ isLoading: true, error: null })
+   signin: async (data: UserSignin) => {
       try {
-         const response = await fetch('/api/auth/login', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data),
-         })
+         set({ isLoading: true, error: null })
+         // Use the action to signin
+         const result = await authAction.loginWithPassword(data)
 
-         const result = await response.json()
-
-         if (!result.success) {
-            set({ error: result.error || 'Login failed', isLoading: false })
-            return { success: false, error: result.error }
-         }
-
-         // Fetch user data after successful login
+         // Fetch user data after successful signin
          await get().fetchCurrentUser()
          return { success: true }
       } catch (error) {
-         const errorMessage = error instanceof Error ? error.message : 'Login failed'
+         const errorMessage = error instanceof Error ? error.message : 'Signin failed'
          set({ error: errorMessage, isLoading: false })
          return { success: false, error: errorMessage }
+      } finally {
+         set({ isLoading: false })
       }
    },
 
-   logout: async () => {
-      set({ isLoading: true })
+   signout: async () => {
       try {
-         await fetch('/api/auth/logout', { method: 'DELETE' })
+         set({ isLoading: true })
+         // Use the service to signout
+         await authAction.logout()
          set({ user: null, isLoading: false })
       } catch (error) {
-         console.error('Logout error:', error)
+         console.error('Signout error:', error)
          set({ isLoading: false })
       }
    },
@@ -91,17 +87,52 @@ export const useUserStore = create<UserState>((set, get) => ({
    fetchCurrentUser: async () => {
       set({ isLoading: true })
       try {
-         const response = await fetch('/api/auth/user')
-         const data = await response.json()
+         // Use the service to get the current user
+         const result = await authAction.getCurrentUser()
 
-         if (data.user) {
-            set({ user: data.user, isLoading: false })
+         if (result.success && result.user) {
+            set({ user: result.user, isLoading: false })
+            return { success: true }
          } else {
-            set({ user: null, isLoading: false })
+            set({ user: null, isLoading: false, error: result.error || null })
+            return { success: false, error: result.error }
          }
       } catch (error) {
-         console.error('Error fetching user:', error)
-         set({ user: null, isLoading: false })
+         const errorMessage = error instanceof Error ? error.message : 'Failed to fetch user'
+         set({ user: null, error: errorMessage, isLoading: false })
+         return { success: false, error: errorMessage }
+      }
+   },
+
+   // User profile actions
+   updateProfile: async data => {
+      set({ isLoading: true, error: null })
+
+      try {
+         const userId = get().user?.id
+         if (!userId) {
+            set({ isLoading: false, error: 'User not authenticated' })
+            return { success: false, error: 'User not authenticated' }
+         }
+
+         // Use the service to update the profile
+         const result = await userService.updateUserProfile(userId, data)
+
+         if (result.success && result.user) {
+            // Update the user in the store with the updated data
+            set({
+               user: { ...get().user, ...result.user },
+               isLoading: false,
+            })
+            return { success: true }
+         } else {
+            set({ isLoading: false, error: result.error || 'Failed to update profile' })
+            return { success: false, error: result.error }
+         }
+      } catch (error) {
+         const errorMessage = error instanceof Error ? error.message : 'Failed to update profile'
+         set({ error: errorMessage, isLoading: false })
+         return { success: false, error: errorMessage }
       }
    },
 
