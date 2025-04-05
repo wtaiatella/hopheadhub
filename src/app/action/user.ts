@@ -58,9 +58,9 @@ export async function createUserProfile(data: UserCreate): Promise<void> {
 /**
  * Get user profile by ID
  */
-export async function getUserById(userId: string): Promise<{ success: boolean; user: User }> {
+export async function getUserById(userId: string): Promise<User> {
    try {
-      const user = await prisma.user.findUnique({
+      const userByID = await prisma.user.findUnique({
          where: { id: userId },
          include: {
             emails: true,
@@ -69,11 +69,11 @@ export async function getUserById(userId: string): Promise<{ success: boolean; u
          },
       })
 
-      if (!user) {
+      if (!userByID) {
          console.error('User not found')
          throw new Error('User not found')
       }
-      return { success: true, user }
+      return userByID
    } catch (error) {
       console.error('Error fetching user:', error)
       throw new Error('Failed to fetch user')

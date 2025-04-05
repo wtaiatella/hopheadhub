@@ -1,16 +1,5 @@
 import { cookies } from 'next/headers'
 import { generateToken, verifyToken, JwtPayload } from '@/lib/jwt'
-import * as crypto from 'crypto'
-
-// Type-safe wrapper for Next.js cookies
-type CookieOptions = {
-   name: string
-   value: string
-   httpOnly?: boolean
-   secure?: boolean
-   maxAge?: number
-   path?: string
-}
 
 /**
  * Set the authentication cookie with JWT token
@@ -18,12 +7,12 @@ type CookieOptions = {
 export async function setAuthCookie(userId: string, email: string): Promise<void> {
    try {
       // Generate JWT token
-      const token = generateToken({ userId, email })
+      const token = await generateToken({ userId, email })
       // Using the correct type for cookies in Next.js
-      const cookieJar = await cookies()
+      const cookieStore = await cookies()
 
       // Set the cookie
-      cookieJar.set('auth_token', token, {
+      cookieStore.set('auth_token', token, {
          httpOnly: true,
          path: '/',
          secure: process.env.NODE_ENV === 'production',
@@ -36,43 +25,31 @@ export async function setAuthCookie(userId: string, email: string): Promise<void
 }
 
 /**
+ * Delete the authentication cookie (logout)
+ */
+export async function deleteAuthCookie(): Promise<void> {
+   try {
+      const cookieStore = await cookies()
+      cookieStore.delete('auth_token')
+   } catch (error) {
+      console.error('Error deleting auth cookie:', error)
+      throw new Error('Failed to delete auth cookie')
+   }
+}
+
+/**
  * Get the current user's token payload from cookies
  */
-export async function getTokenFromCookies(): Promise<JwtPayload | null> {
+export async function getTokenFromCookies(): Promise<JwtPayload> {
    try {
-      const tokenCookie = await cookies().get('auth_token')
+      const tokenCookie = (await cookies()).get('auth_token')
 
-      if (!tokenCookie?.value) {
-         return null
+      if (!tokenCookie) {
+         throw new Error('Failed to get token from cookies')
       }
-
       return verifyToken(tokenCookie.value)
    } catch (error) {
       console.error('Error getting token from cookies:', error)
-      return null
-   }
-}
-
-/**
- * Delete the authentication cookie (logout)
- */
-export async function deleteAuthCookie(): void {
-   try {
-      cookies().delete('auth_token')
-   } catch (error) {
-      console.error('Error deleting auth cookie:', error)
-   }
-}
-
-/**
- * Get the raw JWT token from cookies
- */
-export function getRawTokenFromCookies(): string | null {
-   try {
-      const tokenCookie = cookies().get('auth_token')
-      return tokenCookie?.value || null
-   } catch (error) {
-      console.error('Error getting raw token from cookies:', error)
-      return null
+      throw new Error('Failed to get token from cookies')
    }
 }

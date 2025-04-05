@@ -25,7 +25,7 @@ export async function generateToken(payload: JwtPayload): Promise<string> {
 /**
  * Verify a JWT token and return the payload
  */
-export async function verifyToken(token: string): Promise<JwtPayload | null> {
+export async function verifyToken(token: string): Promise<JwtPayload> {
    const secret = (await getJwtSecret()).secret
 
    if (!secret) {
@@ -36,7 +36,7 @@ export async function verifyToken(token: string): Promise<JwtPayload | null> {
       return jwt.verify(token, secret) as JwtPayload
    } catch (error) {
       console.error('JWT verification error:', error)
-      return null
+      throw new Error('Failed to verify JWT token')
    }
 }
 

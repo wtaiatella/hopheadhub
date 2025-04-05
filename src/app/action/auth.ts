@@ -6,7 +6,7 @@ import * as crypto from 'crypto'
 import { setAuthCookie, deleteAuthCookie, getTokenFromCookies } from '@/services/auth'
 import { UserSignin } from '@/types/user'
 import { hashPassword } from '@/lib/authUtils'
-import { getUserByEmail } from '@/app/action/user'
+import { getUserByEmail. getUserById } from '@/app/action/user'
 import { User } from '@/types/user'
 
 /**
@@ -46,33 +46,27 @@ export async function loginWithPassword(
  * Logout the current user
  */
 export async function logout() {
-   await deleteAuthCookie()
-   revalidatePath('/')
-   return { success: true }
+   try {
+      await deleteAuthCookie()
+      revalidatePath('/')
+      return { success: true }
+   } catch (error) {
+      console.error('Error during logout:', error)
+      throw new Error('Logout failed')
+   }
 }
 
 /**
  * Get the current user from the JWT token
  */
 export async function getCurrentUser() {
-   const payload = getTokenFromCookies()
-
-   if (!payload || !payload.userId) {
-      return null
-   }
-
    try {
+      const payload = await getTokenFromCookies()
       // Fetch the user data
-      const user = await prisma.user.findUnique({
-         where: { id: payload.userId },
-         include: {
-            emails: true,
-         },
-      })
-
+      const user = await getUserById(payload.userId)
       return user
    } catch (error) {
       console.error('Error getting current user:', error)
-      return null
+      throw new Error('Failed to get current user')
    }
 }

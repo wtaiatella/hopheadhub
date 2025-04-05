@@ -11,7 +11,7 @@ interface UserState {
    // Auth actions
    signup: (data: UserCreate) => Promise<{ success: boolean; error?: string }>
    signin: (data: UserSignin) => Promise<{ success: boolean; error?: string }>
-   signout: () => Promise<void>
+   signout: () => Promise<{ success: boolean; error?: string }>
    fetchCurrentUser: () => Promise<{ success: boolean; error?: string }>
 
    // User profile actions
@@ -58,15 +58,14 @@ export const useUserStore = create<UserState>((set, get) => ({
       try {
          set({ isLoading: true, error: null })
          // Use the action to signin
-         const result = await authAction.loginWithPassword(data)
-
+         await authAction.loginWithPassword(data)
          // Fetch user data after successful signin
-         await get().fetchCurrentUser()
-         return { success: true }
+         const user = await get().fetchCurrentUser()
+         return user.success ? { success: true } : { success: false, error: user.error }
       } catch (error) {
-         const errorMessage = error instanceof Error ? error.message : 'Signin failed'
-         set({ error: errorMessage, isLoading: false })
-         return { success: false, error: errorMessage }
+         console.error('Signin error:', error)
+         set({ error: 'Signin failed' })
+         return { success: false, error: 'Signin failed' }
       } finally {
          set({ isLoading: false })
       }
@@ -78,29 +77,28 @@ export const useUserStore = create<UserState>((set, get) => ({
          // Use the service to signout
          await authAction.logout()
          set({ user: null, isLoading: false })
+         return { success: true }
       } catch (error) {
          console.error('Signout error:', error)
+         return { success: false, error: 'Signout failed' }
+      } finally {
          set({ isLoading: false })
       }
    },
 
    fetchCurrentUser: async () => {
-      set({ isLoading: true })
       try {
+         set({ isLoading: true })
          // Use the service to get the current user
-         const result = await authAction.getCurrentUser()
-
-         if (result.success && result.user) {
-            set({ user: result.user, isLoading: false })
-            return { success: true }
-         } else {
-            set({ user: null, isLoading: false, error: result.error || null })
-            return { success: false, error: result.error }
-         }
+         const user = await authAction.getCurrentUser()
+         set({ user })
+         return { success: true }
       } catch (error) {
-         const errorMessage = error instanceof Error ? error.message : 'Failed to fetch user'
-         set({ user: null, error: errorMessage, isLoading: false })
-         return { success: false, error: errorMessage }
+         console.error('Failed to fetch user', error)
+         set({ user: null, error: 'Failed to fetch user' })
+         return { success: false, error: 'Failed to fetch user' }
+      } finally {
+         set({ isLoading: false })
       }
    },
 
@@ -116,7 +114,7 @@ export const useUserStore = create<UserState>((set, get) => ({
          }
 
          // Use the service to update the profile
-         const result = await userService.updateUserProfile(userId, data)
+         const result = await userAction.updateUserProfile(userId, data)
 
          if (result.success && result.user) {
             // Update the user in the store with the updated data
