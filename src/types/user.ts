@@ -81,3 +81,16 @@ export const userSigninSchema = z.object({
 })
 
 export type UserSignin = z.infer<typeof userSigninSchema>
+
+export const userUpdateSchema = z.object({
+   name: z.string().optional(),
+   nickname: z.string().optional(),
+   city: z.string().optional(),
+   state: z.string().optional(),
+   website: z.string().optional(),
+   company: z.string().optional(),
+   beerInterests: z.array(z.string()).optional(),
+   profileImage: z.string().optional(),
+})
+
+export type UserUpdate = z.infer<typeof userUpdateSchema>

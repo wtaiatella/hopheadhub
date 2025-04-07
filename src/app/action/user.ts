@@ -1,6 +1,6 @@
 'use server'
 import { prisma } from '@/lib/prisma'
-import { User, UserCreate } from '@/types/user'
+import { User, UserCreate, UserUpdate } from '@/types/user'
 import { setHashPassword } from '@/lib/authUtils'
 
 /**
@@ -83,7 +83,7 @@ export async function getUserById(userId: string): Promise<User> {
 /**
  * Get user by email
  */
-export async function getUserByEmail(email: string): Promise<{ success: boolean; user: User }> {
+export async function getUserByEmail(email: string): Promise<User> {
    try {
       const userEmail = await prisma.email.findUnique({
          where: { email },
@@ -103,7 +103,7 @@ export async function getUserByEmail(email: string): Promise<{ success: boolean;
          throw new Error('User not found')
       }
 
-      return { success: true, user: userEmail.user }
+      return userEmail.user
    } catch (error) {
       console.error('Error fetching user by email:', error)
       throw new Error('Failed to fetch user')
@@ -113,26 +113,14 @@ export async function getUserByEmail(email: string): Promise<{ success: boolean;
 /**
  * Update user profile
  */
-export async function updateUserProfile(
-   userId: string,
-   data: {
-      name?: string
-      nickname?: string
-      city?: string
-      state?: string
-      website?: string
-      company?: string
-      beerInterests?: string[]
-      profileImage?: string
-   }
-) {
+export async function updateUserProfile(userId: string, data: UserUpdate) {
    try {
       const updatedUser = await prisma.user.update({
          where: { id: userId },
          data,
       })
 
-      return { success: true, user: updatedUser }
+      return updatedUser
    } catch (error) {
       console.error('Error updating user:', error)
       throw new Error('Failed to update user profile')

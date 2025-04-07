@@ -1,12 +1,10 @@
 'use server'
 
-import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
-import * as crypto from 'crypto'
 import { setAuthCookie, deleteAuthCookie, getTokenFromCookies } from '@/services/auth'
 import { UserSignin } from '@/types/user'
 import { hashPassword } from '@/lib/authUtils'
-import { getUserByEmail. getUserById } from '@/app/action/user'
+import { getUserByEmail, getUserById } from '@/app/action/user'
 import { User } from '@/types/user'
 
 /**
@@ -18,7 +16,7 @@ export async function loginWithPassword(
    try {
       // Find the email and associated user
       const userByEmail = await getUserByEmail(data.email)
-      const user = userByEmail.user
+      const user = userByEmail
 
       if (!user.hashedPassword || !user.salt) {
          console.error('This account does not use password authentication')

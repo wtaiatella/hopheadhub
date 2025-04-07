@@ -1,5 +1,5 @@
 import { create } from 'zustand'
-import { User, UserCreate, UserSignin } from '@/types/user'
+import { User, UserCreate, UserSignin, UserUpdate } from '@/types/user'
 import * as userAction from '@/app/action/user'
 import * as authAction from '@/app/action/auth'
 
@@ -15,16 +15,7 @@ interface UserState {
    fetchCurrentUser: () => Promise<{ success: boolean; error?: string }>
 
    // User profile actions
-   updateProfile: (data: {
-      name?: string
-      nickname?: string
-      city?: string
-      state?: string
-      website?: string
-      company?: string
-      beerInterests?: string[]
-      profileImage?: string
-   }) => Promise<{ success: boolean; error?: string }>
+   updateProfile: (data: UserUpdate) => Promise<{ success: boolean; error?: string }>
 
    // State management
    setUser: (user: User | null) => void
@@ -60,8 +51,8 @@ export const useUserStore = create<UserState>((set, get) => ({
          // Use the action to signin
          await authAction.loginWithPassword(data)
          // Fetch user data after successful signin
-         const user = await get().fetchCurrentUser()
-         return user.success ? { success: true } : { success: false, error: user.error }
+         await get().fetchCurrentUser()
+         return { success: true }
       } catch (error) {
          console.error('Signin error:', error)
          set({ error: 'Signin failed' })
@@ -103,34 +94,31 @@ export const useUserStore = create<UserState>((set, get) => ({
    },
 
    // User profile actions
-   updateProfile: async data => {
-      set({ isLoading: true, error: null })
-
+   updateProfile: async (data: UserUpdate) => {
       try {
-         const userId = get().user?.id
-         if (!userId) {
-            set({ isLoading: false, error: 'User not authenticated' })
+         set({ isLoading: true, error: null })
+         await get().fetchCurrentUser()
+         const user = get().user
+
+         if (!user) {
+            console.error('User not authenticated')
             return { success: false, error: 'User not authenticated' }
          }
 
          // Use the service to update the profile
-         const result = await userAction.updateUserProfile(userId, data)
+         const updatedUser = await userAction.updateUserProfile(user.id, data)
 
-         if (result.success && result.user) {
-            // Update the user in the store with the updated data
-            set({
-               user: { ...get().user, ...result.user },
-               isLoading: false,
-            })
-            return { success: true }
-         } else {
-            set({ isLoading: false, error: result.error || 'Failed to update profile' })
-            return { success: false, error: result.error }
-         }
+         // Update the user in the store with the updated data
+         set({
+            user: { ...get().user, ...updatedUser },
+         })
+         return { success: true }
       } catch (error) {
-         const errorMessage = error instanceof Error ? error.message : 'Failed to update profile'
-         set({ error: errorMessage, isLoading: false })
-         return { success: false, error: errorMessage }
+         console.error('Failed to update user', error)
+         set({ error: 'Failed to update user' })
+         return { success: false, error: 'Failed to update user' }
+      } finally {
+         set({ isLoading: false })
       }
    },
 
