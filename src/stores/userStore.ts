@@ -32,6 +32,7 @@ export const useUserStore = create<UserState>((set, get) => ({
    signup: async (data: UserCreate) => {
       try {
          set({ isLoading: true, error: null })
+
          // Check if user exists by email
          await userAction.isUserExistsByEmail(data.email)
          // Use the action to signup the user
@@ -39,7 +40,8 @@ export const useUserStore = create<UserState>((set, get) => ({
          return { success: true }
       } catch (error) {
          console.error('Error creating user:', error)
-         throw new Error('Failed to create user')
+         set({ error: 'Failed to create user' })
+         return { success: false, error: 'Failed to create user' }
       } finally {
          set({ isLoading: false })
       }

@@ -18,6 +18,8 @@ export default function LoginInfo(): React.ReactElement {
       setValueLoginMethod(e.target.value)
    }
 
+   const isPasswordRequired = valueLoginMethod === 2
+
    return (
       <>
          <div className="mb-6">
@@ -38,7 +40,7 @@ export default function LoginInfo(): React.ReactElement {
          </div>
          <Divider>OR</Divider>
 
-         <Form.Item>
+         <Form.Item name="loginMethod" preserve={true}>
             <Radio.Group name="loginMethod" onChange={onChangeLoginMethod} value={valueLoginMethod}>
                <Radio value={1}>Receive a login link in your email</Radio>
                <Divider>OR</Divider>
@@ -52,12 +54,13 @@ export default function LoginInfo(): React.ReactElement {
                preserve={true}
                rules={[
                   {
-                     /*required: true, message: 'Please enter your password!' */
+                     required: isPasswordRequired,
+                     message: 'Please enter your password!',
                   },
                   { min: 4, message: 'Password must be at least 8 characters!' },
                ]}
             >
-               <Input.Password placeholder="Enter your password" />
+               <Input.Password placeholder="Enter your password" disabled={!isPasswordRequired} />
             </Form.Item>
             <Form.Item
                name="confirmPassword"
@@ -66,10 +69,12 @@ export default function LoginInfo(): React.ReactElement {
                dependencies={['password']}
                rules={[
                   {
-                     /* required: true, message: 'Please confirm your password!' */
+                     required: isPasswordRequired,
+                     message: 'Please confirm your password!',
                   },
                   ({ getFieldValue }) => ({
                      validator(_, value) {
+                        if (!isPasswordRequired) return Promise.resolve()
                         if (!value || getFieldValue('password') === value) {
                            return Promise.resolve()
                         }
@@ -78,7 +83,7 @@ export default function LoginInfo(): React.ReactElement {
                   }),
                ]}
             >
-               <Input.Password placeholder="Confirm your password" />
+               <Input.Password placeholder="Confirm your password" disabled={!isPasswordRequired} />
             </Form.Item>
          </div>
       </>

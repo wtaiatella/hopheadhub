@@ -65,6 +65,7 @@ export const userCreateSchema = z
       state: z.string(),
       beerInterests: z.array(z.string()),
       email: z.string().email('Please enter a valid email'),
+      loginMethod: z.number().optional(),
       password: z.string().optional(),
       confirmPassword: z.string().optional(),
    })

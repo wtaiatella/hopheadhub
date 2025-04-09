@@ -2,6 +2,9 @@
 import { Button, message, Steps, Form, Divider } from 'antd'
 import React from 'react'
 import { useState } from 'react'
+import { useUserStore } from '@/stores/userStore'
+import { UserCreate } from '@/types/user'
+import { useRouter } from 'next/navigation'
 
 import UserInfo from './userInfo'
 import LoginInfo from './loginInfo'
@@ -10,22 +13,6 @@ import LoginInfo from './loginInfo'
 interface StepItem {
    title: string
    content: React.FC
-}
-
-// Define form values structure
-interface SignupFormValues {
-   // User info
-   name: string
-   nickname?: string
-   phone: string
-   birthDate: Date
-   city: string
-   state: string
-
-   // Login info
-   email: string
-   password: string
-   confirmPassword: string
 }
 
 const steps: StepItem[] = [
@@ -41,11 +28,17 @@ const steps: StepItem[] = [
 
 export default function Signup(): React.ReactElement {
    const [currentStep, setCurrentStep] = useState<number>(0)
-   const [signupForm] = Form.useForm<SignupFormValues>()
+   const [signupForm] = Form.useForm<UserCreate>()
+   const { signup } = useUserStore()
+   const router = useRouter()
 
    const handleNextStep = async (): Promise<void> => {
       try {
-         await signupForm.validateFields()
+         // Only validate the fields in the current step
+         const fieldsToValidate = ['name', 'nickname', 'city', 'state', 'beerInterests', 'email']
+
+         await signupForm.validateFields(fieldsToValidate)
+
          setCurrentStep(currentStep + 1)
       } catch (error) {
          console.log('Validation Error:', error)
@@ -58,10 +51,29 @@ export default function Signup(): React.ReactElement {
 
    const handleFinish = async (): Promise<void> => {
       try {
-         const values = await signupForm.validateFields()
-         console.log('Sent Form with values:', values)
-         message.success('Registration completed successfully!')
-         // Here you can add logic to send data to the server
+         const formValues = await signupForm.validateFields()
+         console.log('Sent Form with values:', formValues)
+
+         // Call signup from userStore
+         const result = await signup(formValues)
+
+         if (result.success) {
+            // Show appropriate message based on login method
+            const isEmailLink = formValues.loginMethod === 1
+
+            if (isEmailLink) {
+               message.success('Check your email for a signup link!')
+            } else {
+               message.success('Registration completed successfully!')
+            }
+
+            // Redirect to signin page after successful registration
+            setTimeout(() => {
+               router.push('/signin')
+            }, 2000)
+         } else {
+            message.error(result.error || 'Error during registration. Please try again.')
+         }
       } catch (error) {
          console.log('Failed to validate or send form:', error)
          message.error('Error during registration. Please try again.')
@@ -91,7 +103,7 @@ export default function Signup(): React.ReactElement {
             <Steps current={currentStep} items={stepTitles} />
 
             <div className="bg-white p-6 mt-8 rounded-lg shadow-md">
-               <Form form={signupForm} layout="vertical" onFinish={handleFinish}>
+               <Form form={signupForm} layout="vertical" onFinish={handleFinish} preserve={true}>
                   <CurrentStepContent />
 
                   <div className="flex items-center justify-start mt-4 gap-4">
