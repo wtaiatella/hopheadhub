@@ -28,6 +28,15 @@ const steps: StepItem[] = [
 
 export default function Signup(): React.ReactElement {
    const [currentStep, setCurrentStep] = useState<number>(0)
+   const [signupData, setSignupData] = useState<UserCreate>({
+      name: '',
+      nickname: '',
+      city: '',
+      state: '',
+      beerInterests: [],
+      email: '',
+      loginMethod: 'notDefined',
+   })
    const [signupForm] = Form.useForm<UserCreate>()
    const { signup } = useUserStore()
    const router = useRouter()
@@ -37,8 +46,9 @@ export default function Signup(): React.ReactElement {
          // Only validate the fields in the current step
          const fieldsToValidate = ['name', 'nickname', 'city', 'state', 'beerInterests', 'email']
 
-         await signupForm.validateFields(fieldsToValidate)
-
+         const userInfoValues = await signupForm.validateFields(fieldsToValidate)
+         console.log('Sent Form with values:', userInfoValues)
+         setSignupData(prev => ({ ...prev, ...userInfoValues }))
          setCurrentStep(currentStep + 1)
       } catch (error) {
          console.log('Validation Error:', error)
@@ -51,28 +61,30 @@ export default function Signup(): React.ReactElement {
 
    const handleFinish = async (): Promise<void> => {
       try {
-         const formValues = await signupForm.validateFields()
-         console.log('Sent Form with values:', formValues)
+         const fieldsToValidate = ['loginMethod', 'password', 'confirmPassword']
+         const loginInfoValues = await signupForm.validateFields(fieldsToValidate)
+         console.log('Sent Form with values:', loginInfoValues)
 
          // Call signup from userStore
-         const result = await signup(formValues)
+         const signupResult = await signup({ ...signupData, ...loginInfoValues })
 
-         if (result.success) {
+         if (signupResult.success) {
             // Show appropriate message based on login method
-            const isEmailLink = formValues.loginMethod === 1
+            const isEmailLink = loginInfoValues.loginMethod === 'emailLink'
 
             if (isEmailLink) {
                message.success('Check your email for a signup link!')
+               setTimeout(() => {
+                  router.push('/')
+               }, 2000)
             } else {
                message.success('Registration completed successfully!')
+               setTimeout(() => {
+                  router.push('/signin')
+               }, 2000)
             }
-
-            // Redirect to signin page after successful registration
-            setTimeout(() => {
-               router.push('/signin')
-            }, 2000)
          } else {
-            message.error(result.error || 'Error during registration. Please try again.')
+            message.error(signupResult.error || 'Error during registration. Please try again.')
          }
       } catch (error) {
          console.log('Failed to validate or send form:', error)

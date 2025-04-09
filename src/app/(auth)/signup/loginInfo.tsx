@@ -1,24 +1,24 @@
 'use client'
 
-import { Form, Input, Button, Divider, Radio, RadioChangeEvent } from 'antd'
+import { Form, Input, Button, Divider, Radio, RadioChangeEvent, Tooltip } from 'antd'
 import React, { useState } from 'react'
 import Image from 'next/image'
-
-// Define interface for login information
-interface LoginInfo {
-   email: string
-   password: string
-   confirmPassword: string
-}
+import { UserCreate } from '@/types/user'
 
 export default function LoginInfo(): React.ReactElement {
-   const [valueLoginMethod, setValueLoginMethod] = useState<number | null>(null)
+   const [valueLoginMethod, setValueLoginMethod] = useState<UserCreate['loginMethod']>('notDefined')
 
    const onChangeLoginMethod = (e: RadioChangeEvent) => {
       setValueLoginMethod(e.target.value)
    }
 
-   const isPasswordRequired = valueLoginMethod === 2
+   const handleGoogle = () => {
+      setValueLoginMethod('gmail')
+   }
+
+   const handleFacebook = () => {
+      setValueLoginMethod('facebook')
+   }
 
    return (
       <>
@@ -28,23 +28,46 @@ export default function LoginInfo(): React.ReactElement {
             </p>
             <p className="mb-2">You can sign up using your social accounts:</p>
             <div className="flex items-center gap-4">
-               <Button type="default" className="flex items-center gap-2">
-                  <Image src="/assets/icons/google.png" alt="Google" width={20} height={20} />
-                  <p>Sign up with Google</p>
-               </Button>
-               <Button type="default" className="flex items-center gap-2">
-                  <Image src="/assets/icons/facebook.png" alt="Facebook" width={20} height={20} />
-                  <p>Sign up with Facebook</p>
-               </Button>
+               <Tooltip title="Google (not available yet)">
+                  <Button
+                     type="default"
+                     className="flex items-center gap-2"
+                     onClick={handleGoogle}
+                     disabled={true}
+                  >
+                     <Image src="/assets/icons/google.png" alt="Google" width={20} height={20} />
+                     <p>Sign up with Google</p>
+                  </Button>
+               </Tooltip>
+               <Tooltip title="Facebook (not available yet)">
+                  <Button
+                     type="default"
+                     className="flex items-center gap-2"
+                     onClick={handleFacebook}
+                     disabled={true}
+                  >
+                     <Image
+                        src="/assets/icons/facebook.png"
+                        alt="Facebook"
+                        width={20}
+                        height={20}
+                     />
+                     <p>Sign up with Facebook</p>
+                  </Button>
+               </Tooltip>
             </div>
          </div>
          <Divider>OR</Divider>
 
          <Form.Item name="loginMethod" preserve={true}>
             <Radio.Group name="loginMethod" onChange={onChangeLoginMethod} value={valueLoginMethod}>
-               <Radio value={1}>Receive a login link in your email</Radio>
+               <Tooltip title="emailLink (not available yet)">
+                  <Radio value="emailLink" disabled={true}>
+                     Receive a login link in your email
+                  </Radio>
+               </Tooltip>
                <Divider>OR</Divider>
-               <Radio value={2}>Use email and password method</Radio>
+               <Radio value="password">Use email and password method</Radio>
             </Radio.Group>
          </Form.Item>
          <div className="flex gap-4">
@@ -54,13 +77,16 @@ export default function LoginInfo(): React.ReactElement {
                preserve={true}
                rules={[
                   {
-                     required: isPasswordRequired,
+                     required: valueLoginMethod === 'password',
                      message: 'Please enter your password!',
                   },
                   { min: 4, message: 'Password must be at least 8 characters!' },
                ]}
             >
-               <Input.Password placeholder="Enter your password" disabled={!isPasswordRequired} />
+               <Input.Password
+                  placeholder="Enter your password"
+                  disabled={valueLoginMethod !== 'password'}
+               />
             </Form.Item>
             <Form.Item
                name="confirmPassword"
@@ -69,12 +95,12 @@ export default function LoginInfo(): React.ReactElement {
                dependencies={['password']}
                rules={[
                   {
-                     required: isPasswordRequired,
+                     required: valueLoginMethod === 'password',
                      message: 'Please confirm your password!',
                   },
                   ({ getFieldValue }) => ({
                      validator(_, value) {
-                        if (!isPasswordRequired) return Promise.resolve()
+                        if (valueLoginMethod !== 'password') return Promise.resolve()
                         if (!value || getFieldValue('password') === value) {
                            return Promise.resolve()
                         }
@@ -83,7 +109,10 @@ export default function LoginInfo(): React.ReactElement {
                   }),
                ]}
             >
-               <Input.Password placeholder="Confirm your password" disabled={!isPasswordRequired} />
+               <Input.Password
+                  placeholder="Confirm your password"
+                  disabled={valueLoginMethod !== 'password'}
+               />
             </Form.Item>
          </div>
       </>
