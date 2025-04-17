@@ -1,5 +1,24 @@
+/*
+ * Signup page
+ *
+ * @author wtaia
+ * @version 1.0
+ * @date 2025-04-17
+ * @license MIT
+ *
+ * TODO:
+ * - add Country field
+ * - add signup by Google
+ * - add signup by Facebook
+ * - add signup by Apple
+ * - add signup by Email Link
+ * - modify Success message to use Result component from Antd
+ * - modify Error message to use Result component from Antd
+ * - add loading state
+ */
+
 'use client'
-import { Button, message, Steps, Form, Divider } from 'antd'
+import { Button, message, Steps, Form } from 'antd'
 import React from 'react'
 import { useState } from 'react'
 import { useUserStore } from '@/stores/userStore'
