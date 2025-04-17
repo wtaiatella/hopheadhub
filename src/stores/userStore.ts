@@ -32,16 +32,24 @@ export const useUserStore = create<UserState>((set, get) => ({
    signup: async (data: UserCreate) => {
       try {
          set({ isLoading: true, error: null })
-
+         console.log('Creating user with data:', data)
          // Check if user exists by email
-         await userAction.isUserExistsByEmail(data.email)
+         const { exists, message } = await userAction.isUserExistsByEmail(data.email)
+         if (exists) {
+            set({ error: message })
+            return { success: false, error: message }
+         }
          // Use the action to signup the user
-         await userAction.createUserProfile(data)
-         return { success: true }
+         const { success } = await userAction.createUserProfile(data)
+         return { success }
       } catch (error) {
          console.error('Error creating user:', error)
-         set({ error: 'Failed to create user' })
-         return { success: false, error: 'Failed to create user' }
+         const errorMessage = error instanceof Error ? error.message : 'Failed to create user'
+         set({ error: errorMessage })
+         return {
+            success: false,
+            error: errorMessage,
+         }
       } finally {
          set({ isLoading: false })
       }
@@ -51,14 +59,20 @@ export const useUserStore = create<UserState>((set, get) => ({
       try {
          set({ isLoading: true, error: null })
          // Use the action to signin
-         await authAction.loginWithPassword(data)
+         const { success, user, error } = await authAction.loginWithPassword(data)
+         if (!success || !user) {
+            set({ error })
+            return { success: false, error }
+         }
+
          // Fetch user data after successful signin
          await get().fetchCurrentUser()
          return { success: true }
       } catch (error) {
          console.error('Signin error:', error)
-         set({ error: 'Signin failed' })
-         return { success: false, error: 'Signin failed' }
+         const errorMessage = error instanceof Error ? error.message : 'Signin failed'
+         set({ error: errorMessage })
+         return { success: false, error: errorMessage }
       } finally {
          set({ isLoading: false })
       }
@@ -73,7 +87,9 @@ export const useUserStore = create<UserState>((set, get) => ({
          return { success: true }
       } catch (error) {
          console.error('Signout error:', error)
-         return { success: false, error: 'Signout failed' }
+         const errorMessage = error instanceof Error ? error.message : 'Signout failed'
+         set({ error: errorMessage })
+         return { success: false, error: errorMessage }
       } finally {
          set({ isLoading: false })
       }
@@ -83,13 +99,21 @@ export const useUserStore = create<UserState>((set, get) => ({
       try {
          set({ isLoading: true })
          // Use the service to get the current user
-         const user = await authAction.getCurrentUser()
+         const { success, user, error } = await authAction.getCurrentUser()
+         if (!success || !user) {
+            set({ error })
+            return { success: false, error }
+         }
          set({ user })
          return { success: true }
       } catch (error) {
          console.error('Failed to fetch user', error)
-         set({ user: null, error: 'Failed to fetch user' })
-         return { success: false, error: 'Failed to fetch user' }
+         const errorMessage = error instanceof Error ? error.message : 'Failed to fetch user'
+         set({ user: null, error: errorMessage })
+         return {
+            success: false,
+            error: errorMessage,
+         }
       } finally {
          set({ isLoading: false })
       }
@@ -108,17 +132,23 @@ export const useUserStore = create<UserState>((set, get) => ({
          }
 
          // Use the service to update the profile
-         const updatedUser = await userAction.updateUserProfile(user.id, data)
-
+         const { success, userUpdated, message } = await userAction.updateUserProfile(user.id, data)
+         if (!success || !userUpdated) {
+            set({ error: message })
+            return { success: false, error: message }
+         }
          // Update the user in the store with the updated data
          set({
-            user: { ...get().user, ...updatedUser },
+            user: { ...user, ...userUpdated },
          })
          return { success: true }
       } catch (error) {
          console.error('Failed to update user', error)
-         set({ error: 'Failed to update user' })
-         return { success: false, error: 'Failed to update user' }
+         set({ error: error instanceof Error ? error.message : 'Failed to update user' })
+         return {
+            success: false,
+            error: error instanceof Error ? error.message : 'Failed to update user',
+         }
       } finally {
          set({ isLoading: false })
       }

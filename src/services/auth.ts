@@ -40,14 +40,22 @@ export async function deleteAuthCookie(): Promise<void> {
 /**
  * Get the current user's token payload from cookies
  */
-export async function getTokenFromCookies(): Promise<JwtPayload> {
+export async function getTokenFromCookies(): Promise<{
+   success: boolean
+   payload?: JwtPayload
+   error?: string
+}> {
    try {
       const tokenCookie = (await cookies()).get('auth_token')
 
       if (!tokenCookie) {
-         throw new Error('Failed to get token from cookies')
+         return { success: false, error: 'No auth token found' }
       }
-      return verifyToken(tokenCookie.value)
+      const payload = await verifyToken(tokenCookie.value)
+      if (!payload) {
+         return { success: false, error: 'Invalid auth token' }
+      }
+      return { success: true, payload: { userId: payload.userId, email: payload.email } }
    } catch (error) {
       console.error('Error getting token from cookies:', error)
       throw new Error('Failed to get token from cookies')

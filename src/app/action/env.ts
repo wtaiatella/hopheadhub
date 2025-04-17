@@ -51,3 +51,20 @@ export async function getJwtSecret() {
    // Return result to client
    return { success: true, secret: secret }
 }
+
+export async function getNodeEnv() {
+   // Access environment variables
+   const env = process.env.NODE_ENV
+   if (!env) {
+      console.error(
+         'Node environment is undefined. Make sure it is properly set in your environment variables.'
+      )
+      return {
+         success: false,
+         env: undefined,
+         error: 'Node environment not found in environment variables',
+      }
+   }
+   // Return result to client
+   return { success: true, env: env }
+}

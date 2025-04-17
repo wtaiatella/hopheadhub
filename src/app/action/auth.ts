@@ -15,19 +15,23 @@ export async function loginWithPassword(
 ): Promise<{ success: boolean; user?: User; error?: string }> {
    try {
       // Find the email and associated user
-      const userByEmail = await getUserByEmail(data.email)
-      const user = userByEmail
+      const { success, message, user } = await getUserByEmail(data.email)
+
+      if (!success || !user) {
+         console.error(message)
+         return { success: false, error: message }
+      }
 
       if (!user.hashedPassword || !user.salt) {
          console.error('This account does not use password authentication')
-         throw new Error('This account does not use password authentication')
+         return { success: false, error: 'This account does not use password authentication' }
       }
 
       // Verify password
       const hashedAttempt = hashPassword(data.password, user.salt)
       if (hashedAttempt !== user.hashedPassword) {
          console.error('Invalid email or password')
-         throw new Error('Invalid email or password')
+         return { success: false, error: 'Invalid email or password' }
       }
 
       // Set auth cookie and get token
@@ -59,10 +63,14 @@ export async function logout() {
  */
 export async function getCurrentUser() {
    try {
-      const payload = await getTokenFromCookies()
+      const { success, payload, error } = await getTokenFromCookies()
+      if (!success || !payload) {
+         console.error(error)
+         return { success: false, error: error }
+      }
       // Fetch the user data
       const user = await getUserById(payload.userId)
-      return user
+      return { success: true, user: user.user }
    } catch (error) {
       console.error('Error getting current user:', error)
       throw new Error('Failed to get current user')
