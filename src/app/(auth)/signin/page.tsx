@@ -10,15 +10,19 @@ in non-secure environments.
 
 'use client'
 import { getRecaptchaSiteKey } from '@/app/action/env'
-import { Button, Divider, Form, Input, Checkbox, FormInstance } from 'antd'
+import { useUserStore } from '@/stores/userStore'
+import { UserSignin } from '@/types/user'
+import { Button, Divider, Form, Input, Checkbox, FormInstance, message } from 'antd'
 import Image from 'next/image'
+import router from 'next/router'
 import React, { useState, useEffect } from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
 
 const Login = () => {
-   const [form] = Form.useForm()
+   const [loginForm] = Form.useForm()
    const [captchaVerified, setCaptchaVerified] = useState(false) // State to track captcha
    const [recaptchaSiteKey, setRecaptchaSiteKey] = useState<string>('') // State for the reCAPTCHA site key
+   const { signin } = useUserStore()
 
    // Fetch the reCAPTCHA site key on component mount
    useEffect(() => {
@@ -55,8 +59,16 @@ const Login = () => {
       }
    }
 
-   const onFinish = (values: any) => {
+   const onFinish = async (values: UserSignin) => {
       console.log('Received values of form: ', values)
+      // Call login from userStore
+      const loginResult = await signin({ ...values })
+      if (loginResult.success) {
+         message.success('Login successful!')
+         router.push('./')
+      } else {
+         message.error(loginResult.error || 'Error during login. Please try again.')
+      }
    }
 
    interface SubmitButtonProps {
@@ -87,6 +99,10 @@ const Login = () => {
       )
    }
 
+   const handleLogin = async (loginMethod: string) => {
+      console.log('Login method:', loginMethod)
+   }
+
    return (
       <>
          <div className="flex items-center justify-center bg-[url(/assets/cheers-at-sun-set.jpeg)] bg-center bg-cover bg-no-repeat" />
@@ -97,11 +113,21 @@ const Login = () => {
             </div>
             <h1 className="text-4xl font-bold text-primary">Welcome Back!</h1>
             <div className="flex items-center gap-4 my-8">
-               <Button type="default" className="flex items-center gap-2">
+               <Button
+                  type="default"
+                  className="flex items-center gap-2"
+                  onClick={() => handleLogin('google')}
+                  disabled={true}
+               >
                   <Image src="/assets/icons/google.png" alt="Google" width={20} height={20} />
                   <p>Login with Google</p>
                </Button>
-               <Button type="default" className="flex items-center gap-2">
+               <Button
+                  type="default"
+                  className="flex items-center gap-2"
+                  onClick={() => handleLogin('facebook')}
+                  disabled={true}
+               >
                   <Image src="/assets/icons/facebook.png" alt="Facebook" width={20} height={20} />
                   <p>Login with Facebook</p>
                </Button>
@@ -111,7 +137,8 @@ const Login = () => {
                <Form
                   name="login"
                   layout="vertical"
-                  form={form}
+                  form={loginForm}
+                  preserve={true}
                   initialValues={{ remember: true }}
                   onFinish={onFinish}
                >
@@ -139,12 +166,13 @@ const Login = () => {
                   </Form.Item>
 
                   <Divider>OR</Divider>
+
                   <Form.Item
                      label="Send a login link to your e-mail address"
                      name="email-link"
-                     rules={[{ required: true, message: 'Please input your email!' }]}
+                     /* rules={[{ required: true, message: 'Please input your email!' }]} */
                   >
-                     <Input placeholder="enter your email" type="email" />
+                     <Input placeholder="enter your email" type="email" disabled={true} />
                   </Form.Item>
                   <div className="my-4">
                      {recaptchaSiteKey && (
@@ -152,10 +180,7 @@ const Login = () => {
                      )}
                   </div>
                   <Form.Item>
-                     <SubmitButton form={form}>Submit</SubmitButton>
-                     <Button block type="primary" htmlType="submit">
-                        Log in
-                     </Button>
+                     <SubmitButton form={loginForm}>Log in</SubmitButton>
                      or if you don&apos;t have a login? <a href="/signup">Register now!</a>
                   </Form.Item>
                </Form>
