@@ -14,8 +14,10 @@ export async function loginWithPassword(
    data: UserSignin
 ): Promise<{ success: boolean; user?: User; error?: string }> {
    try {
+      console.log('Login with email and password:', data)
       // Find the email and associated user
       const { success, message, user } = await getUserByEmail(data.email)
+      console.log('User found:', user)
 
       if (!success || !user) {
          console.error(message)
@@ -29,6 +31,8 @@ export async function loginWithPassword(
 
       // Verify password
       const hashedAttempt = hashPassword(data.password, user.salt)
+      console.log('Hashed attempt:', hashedAttempt)
+      console.log('Hashed password:', user.hashedPassword)
       if (hashedAttempt !== user.hashedPassword) {
          console.error('Invalid email or password')
          return { success: false, error: 'Invalid email or password' }
@@ -36,7 +40,7 @@ export async function loginWithPassword(
 
       // Set auth cookie and get token
       await setAuthCookie(user.id, data.email)
-
+      console.log('Auth cookie set')
       return { success: true, user }
    } catch (error) {
       console.error('Error during login:', error)

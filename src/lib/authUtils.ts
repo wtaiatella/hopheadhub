@@ -22,5 +22,5 @@ export function hashPassword(password: string | undefined, salt: string | null):
    if (!password || !salt) {
       throw new Error('Failed to hash password')
    }
-   return crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex')
+   return crypto.pbkdf2Sync(password, salt, 100000, 64, 'sha512').toString('hex')
 }

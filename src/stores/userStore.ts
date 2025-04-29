@@ -67,6 +67,7 @@ export const useUserStore = create<UserState>((set, get) => ({
 
          // Fetch user data after successful signin
          await get().fetchCurrentUser()
+         console.log('User signed in:', user)
          return { success: true }
       } catch (error) {
          console.error('Signin error:', error)

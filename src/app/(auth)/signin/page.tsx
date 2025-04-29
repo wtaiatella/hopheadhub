@@ -65,7 +65,7 @@ const Login = () => {
       const loginResult = await signin({ ...values })
       if (loginResult.success) {
          message.success('Login successful!')
-         router.push('./')
+         router.push('/')
       } else {
          message.error(loginResult.error || 'Error during login. Please try again.')
       }
