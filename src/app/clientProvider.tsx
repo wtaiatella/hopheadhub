@@ -1,6 +1,6 @@
 'use client'
 
-import { ConfigProvider } from 'antd'
+import { ConfigProvider, App } from 'antd'
 import { AntdRegistry } from '@ant-design/nextjs-registry'
 import '@ant-design/v5-patch-for-react-19'
 import useAppStore from '@/stores/appStore'
@@ -12,7 +12,9 @@ export default function ClientProvider({ children }: { readonly children: React.
 
    return (
       <ConfigProvider theme={theme}>
-         <AntdRegistry>{children}</AntdRegistry>
+         <AntdRegistry>
+            <App>{children}</App>
+         </AntdRegistry>
       </ConfigProvider>
    )
 }

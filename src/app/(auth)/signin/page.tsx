@@ -14,7 +14,7 @@ import { useUserStore } from '@/stores/userStore'
 import { UserSignin } from '@/types/user'
 import { Button, Divider, Form, Input, Checkbox, FormInstance, message } from 'antd'
 import Image from 'next/image'
-import router from 'next/router'
+import { useRouter } from 'next/navigation'
 import React, { useState, useEffect } from 'react'
 import ReCAPTCHA from 'react-google-recaptcha'
 
@@ -23,6 +23,8 @@ const Login = () => {
    const [captchaVerified, setCaptchaVerified] = useState(false) // State to track captcha
    const [recaptchaSiteKey, setRecaptchaSiteKey] = useState<string>('') // State for the reCAPTCHA site key
    const { signin } = useUserStore()
+   const [messageApi, contextHolder] = message.useMessage()
+   const router = useRouter()
 
    // Fetch the reCAPTCHA site key on component mount
    useEffect(() => {
@@ -61,13 +63,13 @@ const Login = () => {
 
    const onFinish = async (values: UserSignin) => {
       console.log('Received values of form: ', values)
-      // Call login from userStore
+      // Call signin from userStore
       const loginResult = await signin({ ...values })
       if (loginResult.success) {
-         message.success('Login successful!')
-         router.push('/')
+         messageApi.success('Signin successful!')
+         router.push('./')
       } else {
-         message.error(loginResult.error || 'Error during login. Please try again.')
+         messageApi.error(loginResult.error || 'Error during signin. Please try again.')
       }
    }
 
@@ -105,7 +107,17 @@ const Login = () => {
 
    return (
       <>
-         <div className="flex items-center justify-center bg-[url(/assets/cheers-at-sun-set.jpeg)] bg-center bg-cover bg-no-repeat" />
+         {contextHolder}
+         <div className="flex items-center justify-center min-h-[200px]">
+            <Image
+               src="/assets/cheers-at-sun-set.jpeg"
+               alt="Cheers at sunset"
+               width={1200}
+               height={400}
+               className="object-cover w-full"
+               priority
+            />
+         </div>
 
          <div className="bg-background px-24 py-8">
             <div className="flex items-center justify-end mb-8">
