@@ -1,101 +1,55 @@
 'use server'
 
-import { prisma } from '@/lib/prisma'
 import { revalidatePath } from 'next/cache'
-import * as crypto from 'crypto'
-import { Prisma } from '@prisma/client'
-import { setAuthCookie, deleteAuthCookie, getTokenFromCookies } from '@/lib/auth-utils'
-import { RegisterUserInput, LoginUserInput } from '@/types/register'
-
-/**
- * Register a new user with email and password
- */
-export async function registerUser(data: RegisterUserInput) {
-   try {
-      // Check if email already exists
-      const existingEmail = await prisma.email.findUnique({
-         where: { email: data.email },
-      })
-
-      if (existingEmail) {
-         return { success: false, error: 'Email already registered' }
-      }
-
-      // Generate salt and hash password
-      const salt = crypto.randomBytes(16).toString('hex')
-      const hashedPassword = hashPassword(data.password, salt)
-
-      // Create user and email in a transaction
-      const user = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-         // Create the user with hashed password
-         const newUser = await tx.user.create({
-            data: {
-               name: data.name,
-               nickname: data.nickname,
-               beerInterests: data.beerInterests || [],
-               hashedPassword,
-               salt,
-            },
-         })
-
-         // Create the main email for this user
-         await tx.email.create({
-            data: {
-               email: data.email,
-               isMain: true,
-               userId: newUser.id,
-            },
-         })
-
-         return newUser
-      })
-
-      // Set auth cookie and get token
-      const token = setAuthCookie(user.id, data.email)
-
-      revalidatePath('/user/account')
-      return { success: true, userId: user.id, token }
-   } catch (error) {
-      console.error('Error registering user:', error)
-      return { success: false, error: 'Failed to register user' }
-   }
-}
+import { setAuthCookie, deleteAuthCookie, getTokenFromCookies } from '@/services/auth'
+import { UserSignin } from '@/types/user'
+import { hashPassword } from '@/lib/authUtils'
+import { getUserByEmail, getUserById } from '@/app/action/user'
+import { User } from '@/types/user'
 
 /**
  * Login with email and password
  */
-export async function loginWithPassword(data: LoginUserInput) {
+export async function loginWithPassword(
+   data: UserSignin
+): Promise<{ success: boolean; user?: User; error?: string }> {
    try {
+      console.log('Login with email and password:', data)
       // Find the email and associated user
-      const userEmail = await prisma.email.findUnique({
-         where: { email: data.email },
-         include: { user: true },
-      })
+      const { success, message, user } = await getUserByEmail(data.email)
+      console.log('User found:', user)
 
-      if (!userEmail || !userEmail.user) {
-         return { success: false, error: 'Invalid email or password' }
+      if (!success || !user) {
+         console.error(message)
+         return { success: false, error: message }
       }
 
-      const user = userEmail.user
-
-      // Check if user has password authentication set up
       if (!user.hashedPassword || !user.salt) {
+         console.error('This account does not use password authentication')
          return { success: false, error: 'This account does not use password authentication' }
       }
 
       // Verify password
       const hashedAttempt = hashPassword(data.password, user.salt)
+      console.log('Hashed attempt:', hashedAttempt)
+      console.log('Hashed password:', user.hashedPassword)
       if (hashedAttempt !== user.hashedPassword) {
+         console.error('Invalid email or password')
          return { success: false, error: 'Invalid email or password' }
       }
 
       // Set auth cookie and get token
-      const token = setAuthCookie(user.id, data.email)
+      console.log('Setting auth cookie')
+      console.log('User ID:', user.id)
+      console.log('Email:', data.email)
+      console.log('Remember me:', data.rememberMe)
 
-      return { success: true, userId: user.id, token }
+      await setAuthCookie(user.id, data.email, data.rememberMe)
+      console.log('Auth cookie set')
+      return { success: true, user }
    } catch (error) {
       console.error('Error during login:', error)
-      return { success: false, error: 'Login failed' }
+      throw new Error('Login failed')
    }
 }
 
@@ -103,40 +57,31 @@ export async function loginWithPassword(data: LoginUserInput) {
  * Logout the current user
  */
 export async function logout() {
-   deleteAuthCookie()
-   revalidatePath('/')
-   return { success: true }
-}
-
-/**
- * Hash a password with the given salt
- */
-function hashPassword(password: string, salt: string): string {
-   return crypto.pbkdf2Sync(password, salt, 1000, 64, 'sha512').toString('hex')
+   try {
+      await deleteAuthCookie()
+      revalidatePath('/')
+      return { success: true }
+   } catch (error) {
+      console.error('Error during logout:', error)
+      throw new Error('Logout failed')
+   }
 }
 
 /**
  * Get the current user from the JWT token
  */
 export async function getCurrentUser() {
-   const payload = getTokenFromCookies()
-
-   if (!payload || !payload.userId) {
-      return null
-   }
-
    try {
+      const { success, payload, error } = await getTokenFromCookies()
+      if (!success || !payload) {
+         console.error(error)
+         return { success: false, error: error }
+      }
       // Fetch the user data
-      const user = await prisma.user.findUnique({
-         where: { id: payload.userId },
-         include: {
-            emails: true,
-         },
-      })
-
-      return user
+      const user = await getUserById(payload.userId)
+      return { success: true, user: user.user }
    } catch (error) {
       console.error('Error getting current user:', error)
-      return null
+      throw new Error('Failed to get current user')
    }
 }

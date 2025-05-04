@@ -1,33 +1,122 @@
 'use server'
 import { prisma } from '@/lib/prisma'
-import { revalidatePath } from 'next/cache'
-import { Prisma } from '@prisma/client'
-import { User, Email, PhoneNumber, Address } from '@/types/user'
+import { User, UserCreate, UserUpdate } from '@/types/user'
+import { setHashPassword } from '@/lib/authUtils'
+
+/**
+ * Verify is user exists by email
+ */
+export async function isUserExistsByEmail(
+   email: string
+): Promise<{ exists: boolean; message: string }> {
+   try {
+      const userEmail = await prisma.email.findUnique({
+         where: { email },
+      })
+
+      if (userEmail) {
+         console.error('User already exists with this email', userEmail)
+         return { exists: true, message: 'User already exists with this email' }
+      }
+
+      return { exists: false, message: 'User does not exist' }
+   } catch (error) {
+      console.error('Error checking if user exists by email:', error)
+      throw new Error('Failed to check if user exists')
+   }
+}
+
+/**
+ * Create user profile
+ */
+export async function createUserProfile(
+   data: UserCreate
+): Promise<{ success: boolean; message: string }> {
+   try {
+      const { salt, hash } = setHashPassword(data.password)
+      await prisma.user.create({
+         data: {
+            name: data.name,
+            nickname: data.nickname,
+            city: data.city,
+            state: data.state,
+            beerInterests: data.beerInterests,
+            hashedPassword: hash,
+            salt,
+            emails: {
+               create: [
+                  {
+                     email: data.email,
+                     isMain: true,
+                     verified: false,
+                  },
+               ],
+            },
+         },
+      })
+      return { success: true, message: 'User created successfully' }
+   } catch (error) {
+      console.error('Error creating user:', error)
+      throw new Error('Failed to create user')
+   }
+}
+
 /**
  * Get user profile by ID
  */
-export async function getUserById(userId: string) {
+export async function getUserById(
+   userId: string
+): Promise<{ success: boolean; message: string; user: User | null }> {
    try {
-      const user = await prisma.user.findUnique({
+      const userByID = await prisma.user.findUnique({
          where: { id: userId },
          include: {
             emails: true,
             phoneNumbers: true,
             addresses: true,
-            createdEvents: true,
-            bookings: true,
-            accounts: true,
          },
       })
 
-      if (!user) {
-         return { success: false, error: 'User not found' }
+      if (!userByID) {
+         console.error('User not found')
+         return { success: false, message: 'User not found', user: null }
       }
-
-      return { success: true, user }
+      return { success: true, message: 'User found successfully', user: userByID }
    } catch (error) {
       console.error('Error fetching user:', error)
-      return { success: false, error: 'Failed to fetch user' }
+      throw new Error('Failed to fetch user')
+   }
+}
+
+/**
+ * Get user by email
+ */
+export async function getUserByEmail(
+   email: string
+): Promise<{ success: boolean; message: string; user: User | null }> {
+   try {
+      const userEmail = await prisma.email.findUnique({
+         where: { email },
+         include: {
+            user: {
+               include: {
+                  emails: true,
+                  phoneNumbers: true,
+                  addresses: true,
+               },
+            },
+         },
+      })
+
+      if (!userEmail || !userEmail.user) {
+         console.error('User not found')
+         return { success: false, message: 'User not found', user: null }
+      }
+
+      return { success: true, message: 'User found successfully', user: userEmail.user }
+   } catch (error) {
+      console.error('Error fetching user by email:', error)
+      throw new Error('Failed to fetch user')
    }
 }
 
@@ -36,180 +125,21 @@ export async function getUserById(userId: string) {
  */
 export async function updateUserProfile(
    userId: string,
-   data: {
-      name?: string
-      nickname?: string
-      website?: string
-      company?: string
-      beerInterests?: string[]
-      profileImage?: string
-   }
-) {
+   data: UserUpdate
+): Promise<{ success: boolean; message: string; userUpdated: User | null }> {
    try {
       const updatedUser = await prisma.user.update({
          where: { id: userId },
          data,
       })
+      if (!updatedUser) {
+         console.error('User not found')
+         return { success: false, message: 'User not found', userUpdated: null }
+      }
 
-      revalidatePath('/user/account')
-      revalidatePath('/user/contact')
-      return { success: true, user: updatedUser }
+      return { success: true, message: 'User updated successfully', userUpdated: updatedUser }
    } catch (error) {
       console.error('Error updating user:', error)
-      return { success: false, error: 'Failed to update user profile' }
-   }
-}
-
-/**
- * Add a new email address to user
- */
-export async function addUserEmail(userId: string, email: Email) {
-   const {}
-   try {
-      // Begin transaction
-      await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-         // If setting as main, update all existing emails to not be main
-         if (setAsMain) {
-            await tx.email.updateMany({
-               where: { userId },
-               data: { isMain: false },
-            })
-         }
-
-         // Create the new email
-         await tx.email.create({
-            data: {
-               email,
-               isMain: setAsMain,
-               userId,
-            },
-         })
-      })
-
-      revalidatePath('/user/contact')
-      return { success: true }
-   } catch (error) {
-      console.error('Error adding email:', error)
-      return { success: false, error: 'Failed to add email' }
-   }
-}
-
-/**
- * Add a new phone number to user
- */
-export async function addUserPhoneNumber(
-   userId: string,
-   phoneNumber: string,
-   setAsMain: boolean = false
-) {
-   try {
-      // Begin transaction
-      await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-         // If setting as main, update all existing phone numbers to not be main
-         if (setAsMain) {
-            await tx.phoneNumber.updateMany({
-               where: { userId },
-               data: { isMain: false },
-            })
-         }
-
-         // Create the new phone number
-         await tx.phoneNumber.create({
-            data: {
-               phoneNumber,
-               isMain: setAsMain,
-               userId,
-            },
-         })
-      })
-
-      revalidatePath('/user/contact')
-      return { success: true }
-   } catch (error) {
-      console.error('Error adding phone number:', error)
-      return { success: false, error: 'Failed to add phone number' }
-   }
-}
-
-/**
- * Add a new address to user
- */
-export async function addUserAddress(
-   userId: string,
-   address: {
-      name: string
-      street: string
-      number?: string
-      complement?: string
-      zipCode: string
-      city: string
-      state: string
-      country: string
-   }
-) {
-   try {
-      await prisma.address.create({
-         data: {
-            ...address,
-            userId,
-         },
-      })
-
-      revalidatePath('/user/account')
-      return { success: true }
-   } catch (error) {
-      console.error('Error adding address:', error)
-      return { success: false, error: 'Failed to add address' }
-   }
-}
-
-/**
- * Delete an email from user
- */
-export async function deleteEmail(userId: string, email: string) {
-   try {
-      await prisma.email.delete({
-         where: { email, userId },
-      })
-
-      revalidatePath('/user/contact')
-      return { success: true }
-   } catch (error) {
-      console.error('Error deleting email:', error)
-      return { success: false, error: 'Failed to delete email' }
-   }
-}
-
-/**
- * Delete a phone number from user
- */
-export async function deletePhoneNumber(userId: string, phoneNumber: string) {
-   try {
-      await prisma.phoneNumber.delete({
-         where: { phoneNumber, userId },
-      })
-
-      revalidatePath('/user/contact')
-      return { success: true }
-   } catch (error) {
-      console.error('Error deleting phone number:', error)
-      return { success: false, error: 'Failed to delete phone number' }
-   }
-}
-
-/**
- * Delete an address from user
- */
-export async function deleteAddress(userId: string, addressId: string) {
-   try {
-      await prisma.address.delete({
-         where: { id: addressId, userId },
-      })
-
-      revalidatePath('/user/account')
-      return { success: true }
-   } catch (error) {
-      console.error('Error deleting address:', error)
-      return { success: false, error: 'Failed to delete address' }
+      throw new Error('Failed to update user profile')
    }
 }

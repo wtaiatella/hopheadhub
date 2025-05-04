@@ -1,31 +1,38 @@
+/*
+ * Signup page
+ *
+ * @author wtaia
+ * @version 1.0
+ * @date 2025-04-17
+ * @license MIT
+ *
+ * TODO:
+ * - add Country field
+ * - add signup by Google
+ * - add signup by Facebook
+ * - add signup by Apple
+ * - add signup by Email Link
+ * - modify Success message to use Result component from Antd
+ * - modify Error message to use Result component from Antd
+ * - add loading state
+ */
+
 'use client'
-import { Button, message, Steps, Form, Divider } from 'antd'
+import { Button, message, Steps, Form } from 'antd'
 import React from 'react'
 import { useState } from 'react'
+import { useUserStore } from '@/stores/userStore'
+import { UserCreate } from '@/types/user'
+import { useRouter } from 'next/navigation'
 
 import UserInfo from './userInfo'
 import LoginInfo from './loginInfo'
+import Image from 'next/image'
 
 // Define step structure
 interface StepItem {
    title: string
    content: React.FC
-}
-
-// Define form values structure
-interface SignupFormValues {
-   // User info
-   name: string
-   nickname?: string
-   phone: string
-   birthDate: Date
-   city: string
-   state: string
-
-   // Login info
-   email: string
-   password: string
-   confirmPassword: string
 }
 
 const steps: StepItem[] = [
@@ -41,11 +48,27 @@ const steps: StepItem[] = [
 
 export default function Signup(): React.ReactElement {
    const [currentStep, setCurrentStep] = useState<number>(0)
-   const [signupForm] = Form.useForm<SignupFormValues>()
+   const [signupData, setSignupData] = useState<UserCreate>({
+      name: '',
+      nickname: '',
+      city: '',
+      state: '',
+      beerInterests: [],
+      email: '',
+      loginMethod: 'notDefined',
+   })
+   const [signupForm] = Form.useForm<UserCreate>()
+   const { signup } = useUserStore()
+   const router = useRouter()
 
    const handleNextStep = async (): Promise<void> => {
       try {
-         await signupForm.validateFields()
+         // Only validate the fields in the current step
+         const fieldsToValidate = ['name', 'nickname', 'city', 'state', 'beerInterests', 'email']
+
+         const userInfoValues = await signupForm.validateFields(fieldsToValidate)
+         console.log('Sent Form with values:', userInfoValues)
+         setSignupData(prev => ({ ...prev, ...userInfoValues }))
          setCurrentStep(currentStep + 1)
       } catch (error) {
          console.log('Validation Error:', error)
@@ -58,10 +81,31 @@ export default function Signup(): React.ReactElement {
 
    const handleFinish = async (): Promise<void> => {
       try {
-         const values = await signupForm.validateFields()
-         console.log('Sent Form with values:', values)
-         message.success('Registration completed successfully!')
-         // Here you can add logic to send data to the server
+         const fieldsToValidate = ['loginMethod', 'password', 'confirmPassword']
+         const loginInfoValues = await signupForm.validateFields(fieldsToValidate)
+         console.log('Sent Form with values:', loginInfoValues)
+
+         // Call signup from userStore
+         const signupResult = await signup({ ...signupData, ...loginInfoValues })
+
+         if (signupResult.success) {
+            // Show appropriate message based on login method
+            const isEmailLink = loginInfoValues.loginMethod === 'emailLink'
+
+            if (isEmailLink) {
+               message.success('Check your email for a signup link!')
+               setTimeout(() => {
+                  router.push('/')
+               }, 2000)
+            } else {
+               message.success('Registration completed successfully!')
+               setTimeout(() => {
+                  router.push('/signin')
+               }, 2000)
+            }
+         } else {
+            message.error(signupResult.error || 'Error during registration. Please try again.')
+         }
       } catch (error) {
          console.log('Failed to validate or send form:', error)
          message.error('Error during registration. Please try again.')
@@ -74,13 +118,23 @@ export default function Signup(): React.ReactElement {
 
    return (
       <>
-         <div className="flex items-start justify-center h-full bg-[url(/assets/cheers-at-sun-set.jpeg)] bg-center bg-cover bg-no-repeat">
-            <h1 className="text-6xl font-bold text-white mt-20">Hop Head Hub</h1>
+         <div className="flex items-center justify-center h-full relative">
+            <h1 className="text-6xl font-bold text-white absolute top-14 left-1/2 -translate-x-1/2 whitespace-nowrap">
+               Hop Head Hub
+            </h1>
+            <Image
+               src="/assets/cheers-at-sun-set.jpeg"
+               alt="Cheers at sunset"
+               width={800}
+               height={533}
+               className="object-cover h-full"
+               priority
+            />
          </div>
 
          <div className="bg-background px-12 py-8">
             <div className="flex items-center justify-end">
-               <a href="./" className="text-primary hover:underline">
+               <a href="./" className="text-primary hover:text-primary-hover hover:underline">
                   Home
                </a>
             </div>
@@ -91,7 +145,7 @@ export default function Signup(): React.ReactElement {
             <Steps current={currentStep} items={stepTitles} />
 
             <div className="bg-white p-6 mt-8 rounded-lg shadow-md">
-               <Form form={signupForm} layout="vertical" onFinish={handleFinish}>
+               <Form form={signupForm} layout="vertical" onFinish={handleFinish} preserve={true}>
                   <CurrentStepContent />
 
                   <div className="flex items-center justify-start mt-4 gap-4">
@@ -113,7 +167,10 @@ export default function Signup(): React.ReactElement {
             <div className="text-center mt-2">
                <p>
                   Already have an account?{' '}
-                  <a href="/signin" className="text-primary hover:underline">
+                  <a
+                     href="/signin"
+                     className="text-primary hover:text-primary-hover hover:underline"
+                  >
                      Sign in here
                   </a>
                </p>

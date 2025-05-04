@@ -1,16 +1,6 @@
 'use client'
-import { Form, Input, Select, DatePicker, Switch } from 'antd'
+import { Form, Input, Select } from 'antd'
 import React from 'react'
-
-// Define interface for user information
-interface UserInfo {
-   name: string
-   nickname?: string
-   phone: string
-   birthDate: Date
-   city: string
-   state: string
-}
 
 export default function UserInfo(): React.ReactElement {
    return (
@@ -128,7 +118,7 @@ export default function UserInfo(): React.ReactElement {
             </Form.Item>
          </div>
 
-         <Form.Item name="beerInterest" label="What is your beer interest?" preserve={true}>
+         <Form.Item name="beerInterests" label="What is your beer interest?" preserve={true}>
             <Select
                placeholder="Select your beer interests"
                mode="tags"

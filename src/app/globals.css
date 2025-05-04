@@ -41,6 +41,7 @@
 
       --primary: var(--bole-500);
       --primary-foreground: var(--bole-900);
+      --primary-hover: var(--bole-800);
 
       --secondary: var(--bole-700);
       --secondary-foreground: var(--bole-200);
@@ -67,6 +68,19 @@
       --background: #1c1c1e;
       --foreground: #ffffff;
    }
+
+   body {
+      font-family: var(--font-sans);
+   }
+
+   a {
+      color: var(--primary);
+      text-decoration: none;
+   }
+
+   a:hover {
+      text-decoration: underline;
+   }
 }
 
 body {
@@ -83,7 +97,6 @@ body {
       font-family: var(--font-sans);
    }
 }
-
 .container {
    @apply mx-auto w-full max-w-7xl px-6 md:px-8;
 }
