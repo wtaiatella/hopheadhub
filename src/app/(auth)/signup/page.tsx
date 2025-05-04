@@ -27,6 +27,7 @@ import { useRouter } from 'next/navigation'
 
 import UserInfo from './userInfo'
 import LoginInfo from './loginInfo'
+import Image from 'next/image'
 
 // Define step structure
 interface StepItem {
@@ -117,13 +118,23 @@ export default function Signup(): React.ReactElement {
 
    return (
       <>
-         <div className="flex items-start justify-center h-full bg-[url(/assets/cheers-at-sun-set.jpeg)] bg-center bg-cover bg-no-repeat">
-            <h1 className="text-6xl font-bold text-white mt-20">Hop Head Hub</h1>
+         <div className="flex items-center justify-center h-full relative">
+            <h1 className="text-6xl font-bold text-white absolute top-14 left-1/2 -translate-x-1/2 whitespace-nowrap">
+               Hop Head Hub
+            </h1>
+            <Image
+               src="/assets/cheers-at-sun-set.jpeg"
+               alt="Cheers at sunset"
+               width={800}
+               height={533}
+               className="object-cover h-full"
+               priority
+            />
          </div>
 
          <div className="bg-background px-12 py-8">
             <div className="flex items-center justify-end">
-               <a href="./" className="text-primary hover:underline">
+               <a href="./" className="text-primary hover:text-primary-hover hover:underline">
                   Home
                </a>
             </div>
@@ -156,7 +167,10 @@ export default function Signup(): React.ReactElement {
             <div className="text-center mt-2">
                <p>
                   Already have an account?{' '}
-                  <a href="/signin" className="text-primary hover:underline">
+                  <a
+                     href="/signin"
+                     className="text-primary hover:text-primary-hover hover:underline"
+                  >
                      Sign in here
                   </a>
                </p>

@@ -79,6 +79,7 @@ export type UserCreate = z.infer<typeof userCreateSchema>
 export const userSigninSchema = z.object({
    email: z.string().email('Please enter a valid email'),
    password: z.string().optional(),
+   rememberMe: z.boolean().optional().default(false),
 })
 
 export type UserSignin = z.infer<typeof userSigninSchema>

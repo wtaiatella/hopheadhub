@@ -39,7 +39,12 @@ export async function loginWithPassword(
       }
 
       // Set auth cookie and get token
-      await setAuthCookie(user.id, data.email)
+      console.log('Setting auth cookie')
+      console.log('User ID:', user.id)
+      console.log('Email:', data.email)
+      console.log('Remember me:', data.rememberMe)
+
+      await setAuthCookie(user.id, data.email, data.rememberMe)
       console.log('Auth cookie set')
       return { success: true, user }
    } catch (error) {

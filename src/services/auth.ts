@@ -4,19 +4,27 @@ import { generateToken, verifyToken, JwtPayload } from '@/lib/jwt'
 /**
  * Set the authentication cookie with JWT token
  */
-export async function setAuthCookie(userId: string, email: string): Promise<void> {
+export async function setAuthCookie(
+   userId: string,
+   email: string,
+   rememberMe: boolean
+): Promise<void> {
    try {
       // Generate JWT token
       const token = await generateToken({ userId, email })
       // Using the correct type for cookies in Next.js
       const cookieStore = await cookies()
+      console.log('Auth cookie set')
+      console.log('Token:', token)
+      console.log('Remember me:', rememberMe)
+      console.log('Max age:', rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24 * 1)
 
       // Set the cookie
       cookieStore.set('auth_token', token, {
          httpOnly: true,
          path: '/',
          secure: process.env.NODE_ENV === 'production',
-         maxAge: 60 * 60 * 24 * 7, // 1 week
+         maxAge: rememberMe ? 60 * 60 * 24 * 30 : 60 * 60 * 24 * 1, // 1 day or 30 days
       })
    } catch (error) {
       console.error('Error setting auth cookie:', error)

@@ -108,94 +108,128 @@ const Login = () => {
    return (
       <>
          {contextHolder}
-         <div className="flex items-center justify-center min-h-[200px]">
+         <div className="flex items-center justify-center h-full relative">
+            <h1 className="text-6xl font-bold text-white absolute top-14 left-1/2 -translate-x-1/2 whitespace-nowrap">
+               Hop Head Hub
+            </h1>
             <Image
                src="/assets/cheers-at-sun-set.jpeg"
                alt="Cheers at sunset"
-               width={1200}
-               height={400}
-               className="object-cover w-full"
+               width={800}
+               height={533}
+               className="object-cover h-full"
                priority
             />
          </div>
 
-         <div className="bg-background px-24 py-8">
+         <div className="bg-background px-12 py-8">
             <div className="flex items-center justify-end mb-8">
-               <a href="./">home</a>
+               <a href="./" className="text-primary hover:text-primary-hover hover:underline">
+                  home
+               </a>
             </div>
-            <h1 className="text-4xl font-bold text-primary">Welcome Back!</h1>
-            <div className="flex items-center gap-4 my-8">
-               <Button
-                  type="default"
-                  className="flex items-center gap-2"
-                  onClick={() => handleLogin('google')}
-                  disabled={true}
-               >
-                  <Image src="/assets/icons/google.png" alt="Google" width={20} height={20} />
-                  <p>Login with Google</p>
-               </Button>
-               <Button
-                  type="default"
-                  className="flex items-center gap-2"
-                  onClick={() => handleLogin('facebook')}
-                  disabled={true}
-               >
-                  <Image src="/assets/icons/facebook.png" alt="Facebook" width={20} height={20} />
-                  <p>Login with Facebook</p>
-               </Button>
-            </div>
-            <Divider>OR</Divider>
-            <div>
-               <Form
-                  name="login"
-                  layout="vertical"
-                  form={loginForm}
-                  preserve={true}
-                  initialValues={{ remember: true }}
-                  onFinish={onFinish}
-               >
-                  <Form.Item
-                     label="Email"
-                     name="email"
-                     rules={[{ required: true, message: 'Please input your email!' }]}
+            <h1 className="text-3xl font-bold text-primary">Welcome Back!</h1>
+
+            <div className="bg-white p-6 mt-8 rounded-lg shadow-md">
+               <div className="flex flex-wrap items-center gap-4 my-4 justify-center">
+                  <Button
+                     type="default"
+                     className="flex items-center gap-2"
+                     onClick={() => handleLogin('google')}
+                     disabled={true}
                   >
-                     <Input placeholder="enter your email" type="email" />
-                  </Form.Item>
-                  <Form.Item
-                     label="Password"
-                     name="password"
-                     rules={[{ required: true, message: 'Please input your password!' }]}
+                     <Image src="/assets/icons/google.png" alt="Google" width={20} height={20} />
+                     <p>Login with Google</p>
+                  </Button>
+                  <Button
+                     type="default"
+                     className="flex items-center gap-2"
+                     onClick={() => handleLogin('facebook')}
+                     disabled={true}
                   >
-                     <Input placeholder="enter your password" type="password" />
-                  </Form.Item>
-                  <Form.Item>
-                     <div className="flex items-center justify-between">
-                        <Form.Item name="remember" valuePropName="checked" label={null} noStyle>
+                     <Image
+                        src="/assets/icons/facebook.png"
+                        alt="Facebook"
+                        width={20}
+                        height={20}
+                     />
+                     <p>Login with Facebook</p>
+                  </Button>
+               </div>
+               <Divider>OR</Divider>
+               <div className="my-0">
+                  <Form
+                     name="login"
+                     layout="vertical"
+                     form={loginForm}
+                     preserve={true}
+                     initialValues={{ remember: true }}
+                     onFinish={onFinish}
+                  >
+                     <Form.Item
+                        label="Email"
+                        name="email"
+                        rules={[{ required: true, message: 'Please input your email!' }]}
+                     >
+                        <Input placeholder="enter your email" type="email" />
+                     </Form.Item>
+                     <Form.Item
+                        label="Password"
+                        name="password"
+                        help={
+                           <a
+                              className="text-primary hover:text-primary-hover hover:underline block"
+                              href="/forgot-password"
+                           >
+                              Forgot your password?
+                           </a>
+                        }
+                        rules={[{ required: true, message: 'Please input your password!' }]}
+                        style={{ marginBottom: '4px' }}
+                     >
+                        <Input placeholder="enter your password" type="password" />
+                     </Form.Item>
+
+                     <Divider>OR</Divider>
+
+                     <Form.Item
+                        label="Send a login link to your e-mail address"
+                        name="email-link"
+                        /* rules={[{ required: true, message: 'Please input your email!' }]} */
+                     >
+                        <Input placeholder="enter your email" type="email" disabled={true} />
+                     </Form.Item>
+                     <div className="my-0">
+                        {recaptchaSiteKey && (
+                           <ReCAPTCHA sitekey={recaptchaSiteKey} onChange={onCaptchaChange} />
+                        )}
+                     </div>
+                     <div className="flex items-center gap-12 flex-wrap">
+                        <Form.Item style={{ marginBottom: '0px' }}>
+                           <SubmitButton form={loginForm}>Log in</SubmitButton>
+                        </Form.Item>
+                        <Form.Item
+                           name="rememberMe"
+                           valuePropName="checked"
+                           label={null}
+                           style={{ marginBottom: '0px' }}
+                        >
                            <Checkbox>Remember me</Checkbox>
                         </Form.Item>
-                        <a href="/forgot-password">Forgot your password?</a>
                      </div>
-                  </Form.Item>
-
-                  <Divider>OR</Divider>
-
-                  <Form.Item
-                     label="Send a login link to your e-mail address"
-                     name="email-link"
-                     /* rules={[{ required: true, message: 'Please input your email!' }]} */
+                  </Form>
+               </div>
+            </div>
+            <div className="text-center mt-2">
+               <p>
+                  or if you don&apos;t have a login?{' '}
+                  <a
+                     href="/signup"
+                     className="text-primary hover:text-primary-hover hover:underline"
                   >
-                     <Input placeholder="enter your email" type="email" disabled={true} />
-                  </Form.Item>
-                  <div className="my-4">
-                     {recaptchaSiteKey && (
-                        <ReCAPTCHA sitekey={recaptchaSiteKey} onChange={onCaptchaChange} />
-                     )}
-                  </div>
-                  <Form.Item>
-                     <SubmitButton form={loginForm}>Log in</SubmitButton>
-                     or if you don&apos;t have a login? <a href="/signup">Register now!</a>
-                  </Form.Item>
-               </Form>
+                     Register now!
+                  </a>
+               </p>
             </div>
          </div>
       </>
