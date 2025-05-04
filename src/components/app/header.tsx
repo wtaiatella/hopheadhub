@@ -6,6 +6,7 @@ import { UserRound } from 'lucide-react'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import HeaderLink from './headerLink'
+import UserMenu from './userMenu'
 
 export default function Header() {
    const [selected, setSelected] = useState('')
@@ -48,14 +49,7 @@ export default function Header() {
                >
                   Recipes
                </HeaderLink>
-               <Link
-                  href="/signin"
-                  className="text-header-text hover:text-header-hover items-center flex gap-2"
-                  onClick={() => setSelected('')}
-               >
-                  <UserRound className="size-5 inline-block self-center" />
-                  Enter or Register
-               </Link>
+               <UserMenu />
             </nav>
          </div>
       </header>
