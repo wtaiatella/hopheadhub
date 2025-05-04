@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { UserRound } from 'lucide-react'
 import { useState } from 'react'
 import { motion } from 'framer-motion'
+import HeaderLink from './headerLink'
 
 export default function Header() {
    const [selected, setSelected] = useState('')
@@ -23,51 +24,30 @@ export default function Header() {
                      priority
                   />
                </Link>
-               <Link
+               <HeaderLink
                   href="/events"
-                  className={`relative text-header-text hover:text-header-hover ${selected === 'events' ? '' : ''}`}
+                  className=""
+                  isSelected={selected === 'events'}
                   onClick={() => setSelected('events')}
                >
                   Events
-                  {selected === 'events' && (
-                     <motion.div
-                        className="absolute bottom-0 left-0 right-0 h-1 bg-header-hover rounded"
-                        layoutId="underline"
-                        initial={false}
-                        transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                     />
-                  )}
-               </Link>
-               <Link
+               </HeaderLink>
+               <HeaderLink
                   href="/suppliers"
-                  className={`relative text-header-text hover:text-header-hover ${selected === 'suppliers' ? '' : ''}`}
+                  className=""
+                  isSelected={selected === 'suppliers'}
                   onClick={() => setSelected('suppliers')}
                >
                   Suppliers
-                  {selected === 'suppliers' && (
-                     <motion.div
-                        className="absolute bottom-0 left-0 right-0 h-1 bg-header-hover rounded"
-                        layoutId="underline"
-                        initial={false}
-                        transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                     />
-                  )}
-               </Link>
-               <Link
+               </HeaderLink>
+               <HeaderLink
                   href="/recipes"
-                  className={`relative text-header-text hover:text-header-hover ${selected === 'recipes' ? '' : ''}`}
+                  className=""
+                  isSelected={selected === 'recipes'}
                   onClick={() => setSelected('recipes')}
                >
                   Recipes
-                  {selected === 'recipes' && (
-                     <motion.div
-                        className="absolute bottom-0 left-0 right-0 h-1 bg-header-hover rounded"
-                        layoutId="underline"
-                        initial={false}
-                        transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                     />
-                  )}
-               </Link>
+               </HeaderLink>
                <Link
                   href="/signin"
                   className="text-header-text hover:text-header-hover items-center flex gap-2"
