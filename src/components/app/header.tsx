@@ -21,15 +21,15 @@ export default function AppHeader() {
             width: '100%',
             display: 'flex',
             alignItems: 'center',
-            backgroundColor: 'var(--header-background)',
+            height: 'fit-content',
          }}
       >
-         <div className="container mx-auto px-4">
-            <nav className="flex align-center justify-between text-2xl items-center">
+         <div className="container mx-auto">
+            <nav className="flex align-center justify-between text-xl items-center">
                <Link href="/" className="my-3" onClick={() => setSelected('')}>
                   <Image
                      src="/assets/logo-yellow.png"
-                     className="2sm:h-24 2sm:w-36 h-16 w-24 cursor-pointer"
+                     className="2sm:h-20 2sm:w-28 h-16 w-24 cursor-pointer"
                      width={768}
                      height={512}
                      alt="hhh logo"

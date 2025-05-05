@@ -41,7 +41,7 @@ const jet900 = '#d5d5d7'
 const lightTheme: ThemeConfig = {
    algorithm: theme.defaultAlgorithm,
    token: {
-      colorPrimary: bole500,
+      colorPrimary: 'var(--primary)',
       fontFamily: 'var(--font-sans)',
       fontFamilyCode: 'var(--font-mono)',
    },
@@ -49,6 +49,10 @@ const lightTheme: ThemeConfig = {
       DatePicker: {
          /* here is your component tokens */
          presetsWidth: 10,
+      },
+      Layout: {
+         /* here is your component tokens */
+         headerBg: 'var(--primary)',
       },
    },
 }

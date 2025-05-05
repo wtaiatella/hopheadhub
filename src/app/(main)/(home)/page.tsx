@@ -8,7 +8,7 @@ import RecipeSection from './recipeSection'
 
 export default function Home() {
    return (
-      <main>
+      <>
          <HeroSection />
          <AnimatedTextSection />
          <IllustrativeSection />
@@ -16,6 +16,6 @@ export default function Home() {
          <StoresSection />
          <RecipeSection />
          <Newsletter />
-      </main>
+      </>
    )
 }
