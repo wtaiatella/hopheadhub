@@ -1,7 +1,7 @@
-export default function Footer() {
-  return (
-    <footer>
-      <p>footer</p>
-    </footer>
-  );
+export default function AppFooter() {
+   return (
+      <footer>
+         <p>footer</p>
+      </footer>
+   )
 }

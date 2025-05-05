@@ -2,18 +2,29 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { UserRound } from 'lucide-react'
 import { useState } from 'react'
-import { motion } from 'framer-motion'
 import HeaderLink from './headerLink'
 import UserMenu from './userMenu'
+import { Layout } from 'antd'
 
-export default function Header() {
+const { Header } = Layout
+
+export default function AppHeader() {
    const [selected, setSelected] = useState('')
 
    return (
-      <header className="fixed top-0 right-0 left-0 w-full z-10 bg-header-background">
-         <div className="container mx-auto px-4 ">
+      <Header
+         style={{
+            position: 'sticky',
+            top: 0,
+            zIndex: 1,
+            width: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            backgroundColor: 'var(--header-background)',
+         }}
+      >
+         <div className="container mx-auto px-4">
             <nav className="flex align-center justify-between text-2xl items-center">
                <Link href="/" className="my-3" onClick={() => setSelected('')}>
                   <Image
@@ -52,6 +63,6 @@ export default function Header() {
                <UserMenu />
             </nav>
          </div>
-      </header>
+      </Header>
    )
 }
