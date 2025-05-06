@@ -15,14 +15,9 @@ export default function AppHeader() {
    return (
       <Header
          style={{
-            position: 'sticky',
-            top: 0,
-            zIndex: 1,
-            width: '100%',
-            display: 'flex',
-            alignItems: 'center',
             height: 'fit-content',
          }}
+         className="sticky top-0 z-50 w-full flex h-fit"
       >
          <div className="container mx-auto">
             <nav className="flex align-center justify-between text-xl items-center">

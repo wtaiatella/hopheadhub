@@ -51,18 +51,19 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
    }
 
    return (
-      <Layout className="h-screen mt-header container">
+      <Layout className="container mx-auto">
          <Sider
             collapsible
             collapsed={collapsed}
             onCollapse={setCollapsed}
             trigger={null}
-            theme="light"
             width={250}
-            className="border-r border-gray-200 bg-transparent"
-            style={{ background: 'transparent' }}
+            style={{
+               backgroundColor: 'var(--primary-foreground)',
+            }}
+            className="border-r-2 border-secondary rounded-sm sticky my-6"
          >
-            <div className="p-4 flex items-center justify-between border-b border-gray-200 bg-white bg-opacity-80 backdrop-blur-sm">
+            <div className="p-4 flex items-center justify-between bg-primary-foreground bg-opacity-70 backdrop-blur-sm">
                <h2 className={`text-lg font-semibold ${collapsed ? 'hidden' : 'block'}`}>
                   Account Settings
                </h2>
@@ -75,7 +76,7 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
             <Menu
                mode="inline"
                selectedKeys={[pathname]}
-               className=" bg-white backdrop-blur-sm"
+               className=" bg-transparent backdrop-blur-sm"
                items={menuItems}
                onClick={({ key }) => handleMenuClick(key as string)}
             />

@@ -41,7 +41,7 @@ const jet900 = '#d5d5d7'
 const lightTheme: ThemeConfig = {
    algorithm: theme.defaultAlgorithm,
    token: {
-      colorPrimary: 'var(--primary)',
+      colorPrimary: bole500,
       fontFamily: 'var(--font-sans)',
       fontFamilyCode: 'var(--font-mono)',
    },

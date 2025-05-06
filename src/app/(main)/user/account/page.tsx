@@ -65,7 +65,7 @@ const AccountPage = () => {
    const uploadButton = <div>{loading ? <LoadingOutlined /> : <CameraOutlined />}</div>
 
    return (
-      <div className="max-w-4xl mx-auto">
+      <div className="w-full">
          <Title level={2}>Account Information</Title>
 
          <Form
