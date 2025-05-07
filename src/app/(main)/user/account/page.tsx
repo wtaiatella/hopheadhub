@@ -1,12 +1,10 @@
 'use client'
 
 import React, { useState } from 'react'
-import { Form, Input, Button, Upload, message, Card, Typography, Divider } from 'antd'
+import { Form, Input, Button, Upload, message, Card } from 'antd'
 import { CameraOutlined, LoadingOutlined } from '@ant-design/icons'
 import type { UploadChangeParam } from 'antd/es/upload'
 import type { RcFile, UploadFile, UploadProps } from 'antd/es/upload/interface'
-
-const { Title, Text } = Typography
 
 // Mock user data - in a real app, this would come from an API or store
 const initialUserData = {
@@ -65,8 +63,8 @@ const AccountPage = () => {
    const uploadButton = <div>{loading ? <LoadingOutlined /> : <CameraOutlined />}</div>
 
    return (
-      <div className="w-full">
-         <Title level={2}>Account Information</Title>
+      <div className="w-full my-6">
+         <h1 className="p-4 h-16 text-xl font-semibold">Account Information</h1>
 
          <Form
             form={form}
@@ -74,9 +72,10 @@ const AccountPage = () => {
             initialValues={initialUserData}
             onFinish={onFinish}
             requiredMark={false}
+            className="flex flex-col gap-4"
          >
             <Card className="mb-6">
-               <Title level={4}>Profile Photo</Title>
+               <h2 className="text-lg font-semibold">Profile Photo</h2>
                <div className="flex justify-center">
                   <Upload
                      name="avatar"
@@ -102,7 +101,7 @@ const AccountPage = () => {
             </Card>
 
             <Card className="mb-6">
-               <Title level={4}>Profile Information</Title>
+               <h2 className="text-lg font-semibold">Profile Information</h2>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Form.Item
                      name="fullName"
@@ -127,10 +126,10 @@ const AccountPage = () => {
             </Card>
 
             <Card className="mb-6">
-               <Title level={4}>Contact Details</Title>
-               <Text type="secondary" className="block mb-4">
+               <h2 className="text-lg font-semibold">Contact Details</h2>
+               <p className="block mb-4">
                   These details are private and only used to contact you for ticketing or prizes.
-               </Text>
+               </p>
                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <Form.Item name="phoneNumber" label="Phone Number">
                      <Input placeholder="Enter phone number" />

@@ -23,12 +23,12 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
       {
          key: '/user/account',
          icon: <UserOutlined />,
-         label: 'Account Info',
+         label: 'Personal Info',
       },
       {
          key: '/user/contact',
          icon: <ContactsOutlined />,
-         label: 'Contact Settings',
+         label: 'Contact Info',
       },
       {
          key: '/user/events',
@@ -59,14 +59,14 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
             trigger={null}
             width={250}
             style={{
-               backgroundColor: 'var(--primary-foreground)',
+               backgroundColor: 'transparent',
             }}
-            className="border-r-2 border-secondary rounded-sm sticky my-6"
+            className="sticky my-6"
          >
-            <div className="p-4 flex items-center justify-between bg-primary-foreground bg-opacity-70 backdrop-blur-sm">
-               <h2 className={`text-lg font-semibold ${collapsed ? 'hidden' : 'block'}`}>
-                  Account Settings
-               </h2>
+            <div className="p-4 flex items-center justify-between bg-transparent">
+               <p className={`text-xl font-semibold ${collapsed ? 'hidden' : 'block'}`}>
+                  My Account
+               </p>
                <Button
                   type="text"
                   icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -76,12 +76,12 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
             <Menu
                mode="inline"
                selectedKeys={[pathname]}
-               className=" bg-transparent backdrop-blur-sm"
+               className="rounded-lg user-layout"
                items={menuItems}
                onClick={({ key }) => handleMenuClick(key as string)}
             />
          </Sider>
-         <Content className="p-6 bg-transparent">{children}</Content>
+         <Content className="pl-6">{children}</Content>
       </Layout>
    )
 }

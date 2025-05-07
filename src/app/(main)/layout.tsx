@@ -9,7 +9,9 @@ export default function mainLayout({ children }: { children: React.ReactNode }) 
    return (
       <Layout>
          <AppHeader />
-         <Content>{children}</Content>
+         <Content className="bg-background bg-[url('/assets/bg-site.jpg')] bg-repeat">
+            {children}
+         </Content>
          <Footer>
             <AppFooter />
          </Footer>

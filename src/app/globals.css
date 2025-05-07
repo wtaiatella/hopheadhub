@@ -54,6 +54,11 @@
       --header-text: var(--satin_gold-800);
       --header-hover: var(--satin_gold-500);
 
+      --sider-menu-selected-bg: var(--bole-700);
+      --sider-menu-selected-color: var(--bole-900);
+      --sider-menu-hover-bg: var(--bole-850);
+      --sider-menu-hover-color: var(--bole-300);
+
       --highlight: var(--satin_gold-500);
 
       --gradient-from: var(--bole-800);
@@ -109,6 +114,16 @@
          width: var(--calendar-icon-size) !important;
          height: var(--calendar-icon-size) !important;
       }
+   }
+}
+
+.user-layout {
+   .ant-menu-light {
+      background-color: var(--primary-foreground) !important;
+   }
+
+   ul {
+      background-color: var(--primary-foreground) !important;
    }
 }
 
