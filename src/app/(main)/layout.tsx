@@ -1,13 +1,20 @@
 'use client'
-import Footer from '@/components/app/footer'
-import Header from '@/components/app/header'
+import AppFooter from '@/components/app/footer'
+import AppHeader from '@/components/app/header'
+import { Layout } from 'antd'
+
+const { Header, Footer, Content } = Layout
 
 export default function mainLayout({ children }: { children: React.ReactNode }) {
    return (
-      <>
-         <Header />
-         {children}
-         <Footer />
-      </>
+      <Layout>
+         <AppHeader />
+         <Content className="bg-background bg-[url('/assets/bg-site.jpg')] bg-repeat">
+            {children}
+         </Content>
+         <Footer>
+            <AppFooter />
+         </Footer>
+      </Layout>
    )
 }

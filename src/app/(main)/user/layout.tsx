@@ -23,12 +23,12 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
       {
          key: '/user/account',
          icon: <UserOutlined />,
-         label: 'Account Info',
+         label: 'Personal Info',
       },
       {
          key: '/user/contact',
          icon: <ContactsOutlined />,
-         label: 'Contact Settings',
+         label: 'Contact Info',
       },
       {
          key: '/user/events',
@@ -51,20 +51,22 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
    }
 
    return (
-      <Layout className="min-h-screen bg-white mt-header">
+      <Layout className="container mx-auto">
          <Sider
             collapsible
             collapsed={collapsed}
             onCollapse={setCollapsed}
             trigger={null}
-            theme="light"
             width={250}
-            className="border-r border-gray-200"
+            style={{
+               backgroundColor: 'transparent',
+            }}
+            className="sticky my-6"
          >
-            <div className="p-4 flex items-center justify-between border-b border-gray-200">
-               <h2 className={`text-lg font-semibold ${collapsed ? 'hidden' : 'block'}`}>
-                  Account Settings
-               </h2>
+            <div className="p-4 flex items-center justify-between bg-transparent">
+               <p className={`text-xl font-semibold ${collapsed ? 'hidden' : 'block'}`}>
+                  My Account
+               </p>
                <Button
                   type="text"
                   icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
@@ -74,12 +76,12 @@ export default function UserLayout({ children }: { children: React.ReactNode }) 
             <Menu
                mode="inline"
                selectedKeys={[pathname]}
-               className="border-r-0"
+               className="rounded-lg user-layout"
                items={menuItems}
                onClick={({ key }) => handleMenuClick(key as string)}
             />
          </Sider>
-         <Content className="p-6 bg-gray-50">{children}</Content>
+         <Content className="pl-6">{children}</Content>
       </Layout>
    )
 }

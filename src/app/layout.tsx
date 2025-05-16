@@ -2,6 +2,7 @@ import React from 'react'
 import ClientProvider from './clientProvider'
 import { siteConfig } from '@/config/site'
 import { Metadata } from 'next'
+import './globals.css'
 
 export const metadata: Metadata = {
    title: siteConfig.name,

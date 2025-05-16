@@ -50,6 +50,19 @@ const lightTheme: ThemeConfig = {
          /* here is your component tokens */
          presetsWidth: 10,
       },
+      Layout: {
+         /* here is your component tokens */
+         headerBg: 'var(--primary)',
+         bodyBg: 'transparent',
+         siderBg: 'var(--primary)',
+      },
+      Menu: {
+         /* here is your component tokens */
+         itemSelectedBg: 'var(--sider-menu-selected-bg)',
+         itemSelectedColor: 'var(--sider-menu-selected-color)',
+         itemHoverBg: 'var(--sider-menu-hover-bg)',
+         itemHoverColor: 'var(--sider-menu-hover-color)',
+      },
    },
 }
 
