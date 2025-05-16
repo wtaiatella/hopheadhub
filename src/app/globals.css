@@ -142,3 +142,27 @@
    @apply text-primary;
    font-size: 12px;
 }
+
+/* Avatar uploader styles */
+.custom-avatar-uploader {
+   /* Target the ant-upload-wrapper class from ImgCrop */
+   .ant-upload-wrapper .ant-upload-select {
+      border: 2px solid var(--secondary) !important;
+      border-radius: var(--radius) !important;
+      overflow: hidden;
+      width: 150px !important;
+      height: 150px !important;
+   }
+
+   /* Style the upload button */
+   .ant-upload-wrapper .ant-upload-select:hover {
+      border-color: var(--primary) !important;
+      box-shadow: 0 0 0 2px rgba(var(--primary), 0.2);
+   }
+
+   /* Style the image container */
+   .ant-upload-wrapper .ant-upload-list-item-container {
+      border-radius: var(--radius) !important;
+      overflow: hidden;
+   }
+}

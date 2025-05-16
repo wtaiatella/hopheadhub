@@ -2,6 +2,7 @@ import { create } from 'zustand'
 import { User, UserCreate, UserSignin, UserUpdate } from '@/types/user'
 import * as userAction from '@/app/action/user'
 import * as authAction from '@/app/action/auth'
+import * as avatarAction from '@/app/action/avatar'
 
 interface UserState {
    user: User | null
@@ -16,6 +17,7 @@ interface UserState {
 
    // User profile actions
    updateProfile: (data: UserUpdate) => Promise<{ success: boolean; error?: string }>
+   uploadAvatar: (file: File) => Promise<{ success: boolean; error?: string }>
 
    // State management
    setUser: (user: User | null) => void
@@ -149,6 +151,46 @@ export const useUserStore = create<UserState>((set, get) => ({
          return {
             success: false,
             error: error instanceof Error ? error.message : 'Failed to update user',
+         }
+      } finally {
+         set({ isLoading: false })
+      }
+   },
+
+   uploadAvatar: async (file: File) => {
+      try {
+         set({ isLoading: true, error: null })
+         await get().fetchCurrentUser()
+         const user = get().user
+
+         if (!user) {
+            console.error('User not authenticated')
+            return { success: false, error: 'User not authenticated' }
+         }
+
+         // Use the avatar action to upload the file to S3
+         const { success, url, error } = await avatarAction.uploadAvatar(user.id, file)
+         
+         if (!success || !url) {
+            set({ error: error || 'Failed to upload avatar' })
+            return { success: false, error: error || 'Failed to upload avatar' }
+         }
+
+         // Update the user profile with the new avatar URL
+         const updateResult = await get().updateProfile({ profileImage: url })
+         
+         if (!updateResult.success) {
+            return { success: false, error: updateResult.error }
+         }
+         
+         return { success: true, url }
+      } catch (error) {
+         console.error('Failed to upload avatar', error)
+         const errorMessage = error instanceof Error ? error.message : 'Failed to upload avatar'
+         set({ error: errorMessage })
+         return {
+            success: false,
+            error: errorMessage,
          }
       } finally {
          set({ isLoading: false })
