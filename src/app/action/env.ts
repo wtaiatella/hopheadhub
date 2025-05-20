@@ -68,3 +68,20 @@ export async function getNodeEnv() {
    // Return result to client
    return { success: true, env: env }
 }
+
+export async function getResendApiKey() {
+   // Access environment variables
+   const apiKey = process.env.RESEND_API_KEY
+   if (!apiKey) {
+      console.error(
+         'Resend API key is undefined. Make sure it is properly set in your environment variables.'
+      )
+      return {
+         success: false,
+         apiKey: undefined,
+         error: 'Resend API key not found in environment variables',
+      }
+   }
+   // Return result to client
+   return { success: true, apiKey: apiKey }
+}

@@ -14,8 +14,6 @@ const publicPaths = [
    '/user/contact',
    '/user/bookings',
    '/user/events',
-   '/api/auth/login',
-   '/api/auth/register',
 ]
 
 // Function to check if the path is public
@@ -23,7 +21,7 @@ const isPublicPath = (path: string) => {
    return publicPaths.some(
       publicPath =>
          path === publicPath ||
-         path.startsWith('/api/public') ||
+         path.startsWith('/api') ||
          path.startsWith('/_next') ||
          path.startsWith('/favicon') ||
          path.startsWith('/assets')

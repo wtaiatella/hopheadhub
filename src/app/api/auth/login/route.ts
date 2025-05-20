@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import * as crypto from 'crypto'
 import { generateToken } from '@/lib/jwt'
-import { LoginUserInput } from '@/types/register'
+import { LoginUserInput } from '@/types/user'
 
 /**
  * Hash a password with the given salt
@@ -16,6 +16,7 @@ function hashPassword(password: string, salt: string): string {
  * Login with email and password
  */
 export async function POST(request: NextRequest) {
+   console.log('Received request to /api/auth/login')
    try {
       const data = (await request.json()) as LoginUserInput
 
