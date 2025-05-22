@@ -3,8 +3,10 @@ import { z } from 'zod'
 export const emailSchema = z.object({
    id: z.string().optional(),
    email: z.string().email(),
-   verified: z.boolean(),
+   isVerified: z.boolean(),
    isMain: z.boolean(),
+   verificationToken: z.string().optional(),
+   verificationTokenExpiresAt: z.date().optional(),
    userId: z.string(),
 })
 
@@ -13,8 +15,10 @@ export type Email = z.infer<typeof emailSchema>
 export const phoneNumberSchema = z.object({
    id: z.string().optional(),
    phoneNumber: z.string(),
-   verified: z.boolean(),
+   isVerified: z.boolean(),
    isMain: z.boolean(),
+   verificationToken: z.string().optional(),
+   verificationTokenExpiresAt: z.date().optional(),
    userId: z.string(),
 })
 

@@ -2,7 +2,11 @@ import { create } from 'zustand'
 import { User, UserCreate, UserSignin, UserUpdate } from '@/types/user'
 import * as userAction from '@/app/action/user'
 import * as authAction from '@/app/action/auth'
+import * as emailAction from '@/app/action/email'
 import * as avatarAction from '@/app/action/avatar'
+import { generateToken } from '@/lib/tokens'
+import { getAppUrl } from '@/app/action/env'
+import { sendEmail } from '@/services/mail'
 
 interface UserState {
    user: User | null
@@ -14,6 +18,7 @@ interface UserState {
    signin: (data: UserSignin) => Promise<{ success: boolean; error?: string }>
    signout: () => Promise<{ success: boolean; error?: string }>
    fetchCurrentUser: () => Promise<{ success: boolean; error?: string }>
+   sendVerificationEmail: (emailId: string) => Promise<{ success: boolean; error?: string }>
 
    // User profile actions
    updateProfile: (data: UserUpdate) => Promise<{ success: boolean; error?: string }>
@@ -170,7 +175,7 @@ export const useUserStore = create<UserState>((set, get) => ({
 
          // Use the avatar action to upload the file to S3
          const { success, url, error } = await avatarAction.uploadAvatar(user.id, file)
-         
+
          if (!success || !url) {
             set({ error: error || 'Failed to upload avatar' })
             return { success: false, error: error || 'Failed to upload avatar' }
@@ -178,11 +183,11 @@ export const useUserStore = create<UserState>((set, get) => ({
 
          // Update the user profile with the new avatar URL
          const updateResult = await get().updateProfile({ profileImage: url })
-         
+
          if (!updateResult.success) {
             return { success: false, error: updateResult.error }
          }
-         
+
          return { success: true, url }
       } catch (error) {
          console.error('Failed to upload avatar', error)
@@ -194,6 +199,67 @@ export const useUserStore = create<UserState>((set, get) => ({
          }
       } finally {
          set({ isLoading: false })
+      }
+   },
+   sendVerificationEmail: async (emailId: string) => {
+      try {
+         set({ isLoading: true, error: null })
+         await get().fetchCurrentUser()
+         const user = get().user
+
+         if (!user) {
+            console.error('User not authenticated')
+            return { success: false, error: 'User not authenticated' }
+         }
+         // use action to verify email
+         const { success, error, email } = await emailAction.verifyEmail(emailId, user.id)
+         if (!success || !email) {
+            set({ error })
+            return { success: false, error }
+         }
+
+         // Generate verification token (expires in 24 hours)
+         const verificationToken = generateToken()
+         const verificationTokenExpiresAt = new Date()
+         verificationTokenExpiresAt.setHours(verificationTokenExpiresAt.getHours() + 24)
+
+         // update email
+         await emailAction.updateUserEmail({
+            ...email,
+            verificationToken,
+            verificationTokenExpiresAt,
+         })
+
+         // Get app url
+         const appUrl = await getAppUrl()
+         if (!appUrl.success) {
+            console.error('Error getting app URL:', appUrl.error)
+            return { success: false, error: 'Failed to get app URL' }
+         }
+
+         // Send verification email
+         const verificationUrl = `${appUrl.url}/verify-email?token=${verificationToken}`
+         const html = `
+            <p>Hello ${user.name || 'there'},</p>
+            <p>Please click the button below to verify your email address:</p>
+            <a href="${verificationUrl}" 
+               style="display: inline-block; padding: 10px 20px; background: #1890ff; color: white; text-decoration: none; border-radius: 4px;">
+              Verify Email
+            </a>
+            <p>Or copy and paste this link into your browser:</p>
+            <p>${verificationUrl}</p>
+            <p>This link will expire in 24 hours.</p>
+          `
+
+         await sendEmail(email.email, 'Verify your email address', html)
+
+         return { success: true }
+      } catch (error) {
+         console.error('Error in sendVerificationEmail:', error)
+         return {
+            success: false,
+            error: error instanceof Error ? error.message : 'An error occurred',
+         }
       }
    },
 
