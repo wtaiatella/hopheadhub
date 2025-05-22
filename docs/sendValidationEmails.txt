@@ -1,0 +1,23 @@
+
+DONE: updateUserEmail should be updated to handle the new token fields
+ Should validate if the update was successful
+
+
+TODO: Check: Ensure sendEmail is properly implemented in @/services/mail.ts to handle errors and logging.
+
+
+TODO: Token Security:
+Ensure tokens are single-use
+Invalidate previous tokens when a new one is generated
+
+TODO: Email Service:
+Add email sending retry logic
+Add email delivery status tracking
+
+TODO: Move email sending to a queue system for better reliability
+
+TODO: Add email template caching
+
+TODO: Add email sending analytics
+
+TODO: Add support for email localization

@@ -7,6 +7,7 @@ import * as avatarAction from '@/app/action/avatar'
 import { generateToken } from '@/lib/tokens'
 import { getAppUrl } from '@/app/action/env'
 import { sendEmail } from '@/services/mail'
+import { getVerificationEmailTemplate } from '@/templates/emails/verification-email'
 
 interface UserState {
    user: User | null
@@ -201,6 +202,7 @@ export const useUserStore = create<UserState>((set, get) => ({
          set({ isLoading: false })
       }
    },
+
    sendVerificationEmail: async (emailId: string) => {
       try {
          set({ isLoading: true, error: null })
@@ -215,7 +217,7 @@ export const useUserStore = create<UserState>((set, get) => ({
          const { success, error, email } = await emailAction.verifyEmail(emailId, user.id)
          if (!success || !email) {
             set({ error })
-            return { success: false, error }
+            return { success: false, error: error || 'Failed to verify email' }
          }
 
          // Generate verification token (expires in 24 hours)
@@ -230,7 +232,7 @@ export const useUserStore = create<UserState>((set, get) => ({
             verificationTokenExpiresAt,
          })
 
-         // Get app url
+         // Get app url from .env
          const appUrl = await getAppUrl()
          if (!appUrl.success) {
             console.error('Error getting app URL:', appUrl.error)
@@ -239,17 +241,7 @@ export const useUserStore = create<UserState>((set, get) => ({
 
          // Send verification email
          const verificationUrl = `${appUrl.url}/verify-email?token=${verificationToken}`
-         const html = `
-            <p>Hello ${user.name || 'there'},</p>
-            <p>Please click the button below to verify your email address:</p>
-            <a href="${verificationUrl}" 
-               style="display: inline-block; padding: 10px 20px; background: #1890ff; color: white; text-decoration: none; border-radius: 4px;">
-              Verify Email
-            </a>
-            <p>Or copy and paste this link into your browser:</p>
-            <p>${verificationUrl}</p>
-            <p>This link will expire in 24 hours.</p>
-          `
+         const html = getVerificationEmailTemplate(user.name || 'there', verificationUrl)
 
          await sendEmail(email.email, 'Verify your email address', html)
 
