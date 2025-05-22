@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { verifyToken } from '@/lib/jwt'
+import { verifyJWT } from '@/lib/tokens'
 
 // Add paths that should be accessible without authentication
 const publicPaths = [
@@ -45,7 +45,7 @@ export function middleware(request: NextRequest) {
    }
 
    // Verify the token
-   const payload = verifyToken(token)
+   const payload = verifyJWT(token)
 
    // If token is invalid, redirect to login
    if (!payload) {

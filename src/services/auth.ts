@@ -1,5 +1,5 @@
 import { cookies } from 'next/headers'
-import { generateToken, verifyToken, JwtPayload } from '@/lib/jwt'
+import { generateJWT, verifyJWT, JwtPayload } from '@/lib/tokens'
 
 /**
  * Set the authentication cookie with JWT token
@@ -11,7 +11,7 @@ export async function setAuthCookie(
 ): Promise<void> {
    try {
       // Generate JWT token
-      const token = await generateToken({ userId, email })
+      const token = await generateJWT({ userId, email })
       // Using the correct type for cookies in Next.js
       const cookieStore = await cookies()
       console.log('Auth cookie set')
@@ -59,7 +59,7 @@ export async function getTokenFromCookies(): Promise<{
       if (!tokenCookie) {
          return { success: false, error: 'No auth token found' }
       }
-      const payload = await verifyToken(tokenCookie.value)
+      const payload = await verifyJWT(tokenCookie.value)
       if (!payload) {
          return { success: false, error: 'Invalid auth token' }
       }
