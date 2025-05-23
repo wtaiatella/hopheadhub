@@ -102,3 +102,20 @@ export async function getAppUrl() {
    // Return result to client
    return { success: true, url: url }
 }
+
+export async function getEnvVariable(envVariable: string) {
+   // Access environment variables
+   const variable = process.env[envVariable]
+   if (!variable) {
+      console.error(
+         `${envVariable} is undefined. Make sure it is properly set in your environment variables.`
+      )
+      return {
+         success: false,
+         variable: undefined,
+         error: `${envVariable} not found in environment variables`,
+      }
+   }
+   // Return result to client
+   return { success: true, variable: variable }
+}

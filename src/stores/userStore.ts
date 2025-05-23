@@ -240,10 +240,19 @@ export const useUserStore = create<UserState>((set, get) => ({
          }
 
          // Send verification email
-         const verificationUrl = `${appUrl.url}/verify-email?token=${verificationToken}`
+         const verificationUrl = `${appUrl.url}/api/email/verify?token=${verificationToken}`
          const html = getVerificationEmailTemplate(user.name || 'there', verificationUrl)
 
-         await sendEmail(email.email, 'Verify your email address', html)
+         const { success: sendEmailSuccess, error: sendEmailError } = await sendEmail(
+            email.email,
+            'Verify your email address',
+            html
+         )
+
+         if (!sendEmailSuccess) {
+            console.error('Error sending verification email:', sendEmailError)
+            return { success: false, error: 'Failed to send verification email' }
+         }
 
          return { success: true }
       } catch (error) {

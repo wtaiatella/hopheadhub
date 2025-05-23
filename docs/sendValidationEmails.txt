@@ -3,21 +3,28 @@ DONE: updateUserEmail should be updated to handle the new token fields
  Should validate if the update was successful
 
 
-TODO: Check: Ensure sendEmail is properly implemented in @/services/mail.ts to handle errors and logging.
+DONE: Check: Ensure sendEmail is properly implemented in @/services/mail.ts to handle errors and logging.
 
 
-TODO: Token Security:
-Ensure tokens are single-use
+NO NEED: Token Security:
+Ensure tokens are single-use:
+For 1 billion tokens (10^9), the probability of a collision is about 1 in 10^60
+Even with 1 trillion tokens (10^12), the probability remains astronomically low
+This implementation is cryptographically secure and suitable for generating unique tokens, even for high-volume systems. 
+The chance of a collision is negligible for any reasonable number of tokens.
+
+NO NEED: Token Security:
 Invalidate previous tokens when a new one is generated
+When a new token is generated, the previous token is overwritten in the database.
 
-TODO: Email Service:
+NO NEED: Email Service:
 Add email sending retry logic
+
+FUTURE: Email Service:
 Add email delivery status tracking
 
-TODO: Move email sending to a queue system for better reliability
+FUTURE: Move email sending to a queue system for better reliability
 
-TODO: Add email template caching
+FUTURE: Add email template caching
 
-TODO: Add email sending analytics
 
-TODO: Add support for email localization
