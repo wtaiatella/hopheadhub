@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import * as crypto from 'crypto'
-import { generateToken } from '@/lib/jwt'
+import { generateJWT } from '@/lib/tokens'
 import { RegisterUserInput } from '@/types/register'
 
 /**
@@ -61,7 +61,7 @@ export async function PUT(request: NextRequest) {
       })
 
       // Generate JWT token
-      const token = generateToken({ userId: user.id, email: data.email })
+      const token = generateJWT({ userId: user.id, email: data.email })
 
       // Create response with cookie
       const response = NextResponse.json({

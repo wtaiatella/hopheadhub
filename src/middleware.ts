@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { verifyToken } from '@/lib/jwt'
+import { verifyJWT } from '@/lib/tokens'
 
 // Add paths that should be accessible without authentication
 const publicPaths = [
@@ -14,8 +14,6 @@ const publicPaths = [
    '/user/contact',
    '/user/bookings',
    '/user/events',
-   '/api/auth/login',
-   '/api/auth/register',
 ]
 
 // Function to check if the path is public
@@ -23,7 +21,7 @@ const isPublicPath = (path: string) => {
    return publicPaths.some(
       publicPath =>
          path === publicPath ||
-         path.startsWith('/api/public') ||
+         path.startsWith('/api') ||
          path.startsWith('/_next') ||
          path.startsWith('/favicon') ||
          path.startsWith('/assets')
@@ -47,7 +45,7 @@ export function middleware(request: NextRequest) {
    }
 
    // Verify the token
-   const payload = verifyToken(token)
+   const payload = verifyJWT(token)
 
    // If token is invalid, redirect to login
    if (!payload) {

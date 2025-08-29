@@ -1,0 +1,23 @@
+### Send test email
+POST http://localhost:3000/api/mail
+Content-Type: application/json
+Accept: application/json
+
+{
+  "to": "veredianeviera@yahoo.com.br",
+  "subject": "Test from REST Client",
+  "html": "<p>This is a test email from REST Client</p>"
+}
+
+
+
+### Test GET
+GET http://localhost:3000/api/test
+
+### Test POST
+POST http://localhost:3000/api/test
+Content-Type: application/json
+
+{
+  "test": "data"
+}

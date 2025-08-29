@@ -1,0 +1,39 @@
+1: show all emails found in db for the user
+2: add a flag to show the main email
+3: add a button to verify the email
+4: add a button to delete the email
+5: add a button to set the email as main
+
+there is already a button to add email, and an input to write the new email,
+6: I want to show this input new email olny when the user click on the button to add email
+
+Email Verification Status:
+The current implementation shows a verified status with a checkmark and "Verified" text.
+Consider adding a timestamp for when the email was last verified.
+
+Email Input Enhancement:
+Add email format validation in real-time as the user types.
+Consider adding a confirmation email field to prevent typos.
+
+Security:
+Add rate limiting for the "Send verification link" button to prevent abuse.
+Show a countdown timer after sending a verification link to indicate when the user can request another one.
+
+User Experience:
+Add a loading state when the verification email is being sent.
+Consider adding a tooltip explaining why email verification is important.
+
+Multiple Emails:
+The UI has an "Add" button (PlusOutlined) but no implementation for managing multiple emails.
+Consider implementing a list of emails with the ability to:
+Set a primary email
+Remove non-primary emails
+Show verification status for each
+
+Error Handling:
+Add more specific error messages for different scenarios (e.g., email already in use, invalid domain, etc.)
+Add a resend verification option if the email is unverified.
+
+Accessibility:
+Add proper ARIA labels for screen readers.
+Ensure keyboard navigation works correctly for all interactive elements.

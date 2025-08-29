@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken'
 import { getJwtSecret } from '@/app/action/env'
+import { randomBytes } from 'crypto'
 
 // Token expiration time
 const EXPIRES_IN = '7d' // 7 days
@@ -12,7 +13,7 @@ export interface JwtPayload {
 /**
  * Generate a JWT token for a user
  */
-export async function generateToken(payload: JwtPayload): Promise<string> {
+export async function generateJWT(payload: JwtPayload): Promise<string> {
    const secret = (await getJwtSecret()).secret
 
    if (!secret) {
@@ -25,7 +26,7 @@ export async function generateToken(payload: JwtPayload): Promise<string> {
 /**
  * Verify a JWT token and return the payload
  */
-export async function verifyToken(token: string): Promise<JwtPayload> {
+export async function verifyJWT(token: string): Promise<JwtPayload> {
    const secret = (await getJwtSecret()).secret
 
    if (!secret) {
@@ -55,4 +56,8 @@ export async function extractTokenFromHeader(authHeader?: string): Promise<strin
    }
 
    return authHeader.substring(7) // Remove 'Bearer ' prefix
+}
+
+export function generateToken(length = 32): string {
+   return randomBytes(length).toString('hex')
 }

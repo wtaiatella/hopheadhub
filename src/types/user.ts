@@ -3,8 +3,10 @@ import { z } from 'zod'
 export const emailSchema = z.object({
    id: z.string().optional(),
    email: z.string().email(),
-   verified: z.boolean(),
+   isVerified: z.boolean(),
    isMain: z.boolean(),
+   verificationToken: z.string().optional(),
+   verificationTokenExpiresAt: z.date().optional(),
    userId: z.string(),
 })
 
@@ -13,8 +15,10 @@ export type Email = z.infer<typeof emailSchema>
 export const phoneNumberSchema = z.object({
    id: z.string().optional(),
    phoneNumber: z.string(),
-   verified: z.boolean(),
+   isVerified: z.boolean(),
    isMain: z.boolean(),
+   verificationToken: z.string().optional(),
+   verificationTokenExpiresAt: z.date().optional(),
    userId: z.string(),
 })
 
@@ -24,8 +28,8 @@ export const addressSchema = z.object({
    id: z.string().optional(),
    name: z.string(),
    street: z.string(),
-   number: z.string().nullable().optional(),
-   complement: z.string().nullable().optional(),
+   number: z.string(),
+   complement: z.string().optional().default(''),
    zipCode: z.string(),
    city: z.string(),
    state: z.string(),
@@ -42,10 +46,10 @@ export const userSchema = z.object({
    nickname: z.string(),
    city: z.string(),
    state: z.string(),
-   website: z.string().nullable().optional(),
-   company: z.string().nullable().optional(),
+   website: z.string().optional().default(''),
+   company: z.string().optional().default(''),
    beerInterests: z.array(z.string()).default([]),
-   profileImage: z.string().nullable().optional(),
+   profileImage: z.string().optional().default(''),
    hashedPassword: z.string().nullable().optional(),
    salt: z.string().nullable().optional(),
    emails: z.array(emailSchema).optional(),
@@ -92,7 +96,7 @@ export const userUpdateSchema = z.object({
    website: z.string().optional(),
    company: z.string().optional(),
    beerInterests: z.array(z.string()).optional(),
-   profileImage: z.string().optional(),
+   profileImage: z.string().optional().default(''),
 })
 
 export type UserUpdate = z.infer<typeof userUpdateSchema>
