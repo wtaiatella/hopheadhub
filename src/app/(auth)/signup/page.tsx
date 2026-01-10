@@ -18,16 +18,15 @@
  */
 
 'use client'
-import { Button, message, Steps, Form } from 'antd'
-import React from 'react'
-import { useState } from 'react'
 import { useUserStore } from '@/stores/userStore'
 import { UserCreate } from '@/types/user'
+import { Button, Form, message, Steps } from 'antd'
 import { useRouter } from 'next/navigation'
+import React, { useState } from 'react'
 
-import UserInfo from './userInfo'
-import LoginInfo from './loginInfo'
 import Image from 'next/image'
+import LoginInfo from './loginInfo'
+import UserInfo from './userInfo'
 
 // Define step structure
 interface StepItem {
@@ -53,9 +52,11 @@ export default function Signup(): React.ReactElement {
       nickname: '',
       city: '',
       state: '',
-      beerInterests: [],
+      beerInterests: [''],
       email: '',
-      loginMethod: 'notDefined',
+      loginMethod: 'password',
+      password: '',
+      confirmPassword: '',
    })
    const [signupForm] = Form.useForm<UserCreate>()
    const { signup } = useUserStore()

@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { create } from 'zustand'
 import type { ThemeConfig } from 'antd'
 import { theme } from 'antd'
+import { create } from 'zustand'
 
 type AppState = {
    isDarkMode: boolean

@@ -10,7 +10,7 @@ export async function addUserPhoneNumber(userId: string, phoneNumber: PhoneNumbe
       const newPhoneNumber = await prisma.phoneNumber.create({
          data: {
             phoneNumber: phoneNumber.phoneNumber,
-            verified: phoneNumber.verified,
+            isVerified: phoneNumber.isVerified,
             isMain: phoneNumber.isMain,
             userId,
          },
@@ -31,7 +31,7 @@ export async function updateUserPhoneNumber(phoneNumber: PhoneNumber) {
          where: { id: phoneNumber.id },
          data: {
             phoneNumber: phoneNumber.phoneNumber,
-            verified: phoneNumber.verified,
+            isVerified: phoneNumber.isVerified,
             isMain: phoneNumber.isMain,
          },
       })

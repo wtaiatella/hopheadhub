@@ -1,22 +1,11 @@
 'use client'
 
-import { useState } from 'react'
-import {
-   Steps,
-   Button,
-   Form,
-   Input,
-   Select,
-   Radio,
-   DatePicker,
-   TimePicker,
-   Upload,
-   Card,
-} from 'antd'
-import { Plus, ArrowLeft } from 'lucide-react'
 import Title from '@/components/commom/title'
 import { EventMap } from '@/components/map'
+import { Button, Card, DatePicker, Form, Input, Select, Steps, TimePicker, Upload } from 'antd'
+import { ArrowLeft, Plus } from 'lucide-react'
 import Link from 'next/link'
+import { useState } from 'react'
 
 const { Step } = Steps
 const { TextArea } = Input
@@ -364,7 +353,9 @@ export default function CreateEvent() {
                         <div className="flex flex-col items-center justify-center p-4">
                            <div className="text-4xl mb-4">🆓</div>
                            <h3 className="text-lg font-medium">Free Event</h3>
-                           <p className="text-gray-500 text-center">I'm running a free event</p>
+                           <p className="text-gray-500 text-center">
+                              I&apos;m running a free event
+                           </p>
                         </div>
                      </Card>
                   </div>
@@ -418,7 +409,7 @@ export default function CreateEvent() {
             return (
                <div className="space-y-8">
                   <h2 className="text-2xl font-semibold">
-                     Nearly there! Check everything's correct.
+                     Nearly there! Check everything&apos;s correct.
                   </h2>
                   <div className="border border-gray-200 rounded-lg overflow-hidden">
                      <div className="bg-gray-200 h-48 flex items-center justify-center">

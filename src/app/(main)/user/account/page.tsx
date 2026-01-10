@@ -1,12 +1,12 @@
 'use client'
 
-import React, { useState, useEffect } from 'react'
-import { Form, Input, Button, Upload, message, Card } from 'antd'
-import { CameraOutlined, LoadingOutlined } from '@ant-design/icons'
-import type { RcFile, UploadProps } from 'antd/es/upload/interface'
 import { useUserStore } from '@/stores/userStore'
 import { User } from '@/types/user'
+import { CameraOutlined, LoadingOutlined } from '@ant-design/icons'
+import { Button, Card, Form, Input, Upload, message } from 'antd'
 import ImgCrop from 'antd-img-crop'
+import type { UploadProps } from 'antd/es/upload/interface'
+import { useEffect, useState } from 'react'
 
 const AccountPage = () => {
    const [form] = Form.useForm()
@@ -44,7 +44,7 @@ const AccountPage = () => {
                profileImage: currentUser.profileImage,
             }
 
-            setImageUrl(userData.profileImage)
+            setImageUrl(userData.profileImage ?? '')
 
             // Update form state
             setFormData(userData)

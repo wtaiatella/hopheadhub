@@ -1,8 +1,8 @@
-import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import * as crypto from 'crypto'
 import { generateJWT } from '@/lib/tokens'
-import { LoginUserInput } from '@/types/user'
+import { UserSignin } from '@/types/user'
+import * as crypto from 'crypto'
+import { NextRequest, NextResponse } from 'next/server'
 
 /**
  * Hash a password with the given salt
@@ -18,7 +18,7 @@ function hashPassword(password: string, salt: string): string {
 export async function POST(request: NextRequest) {
    console.log('Received request to /api/auth/login')
    try {
-      const data = (await request.json()) as LoginUserInput
+      const data = (await request.json()) as UserSignin
 
       // Find the email and associated user
       const userEmail = await prisma.email.findUnique({
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Generate JWT token
-      const token = generateJWT({ userId: user.id, email: data.email })
+      const token = await generateJWT({ userId: user.id, email: data.email })
 
       // Create response with cookie
       const response = NextResponse.json({

@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
 import { verifyJWT } from '@/lib/tokens'
+import { NextRequest, NextResponse } from 'next/server'
 
 /**
  * GET /api/auth/logout
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
 
    try {
       // Verify the JWT token
-      const payload = verifyJWT(token)
+      const payload = await verifyJWT(token)
 
       if (!payload || !payload.userId) {
          return NextResponse.json({ user: null }, { status: 401 })

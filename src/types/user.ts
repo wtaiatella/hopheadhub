@@ -70,8 +70,8 @@ export const userCreateSchema = z
       beerInterests: z.array(z.string()),
       email: z.string().email('Please enter a valid email'),
       loginMethod: z.enum(['notDefined', 'gmail', 'facebook', 'emailLink', 'password']),
-      password: z.string().optional(),
-      confirmPassword: z.string().optional(),
+      password: z.string(),
+      confirmPassword: z.string(),
    })
    .refine(data => data.password === data.confirmPassword, {
       message: "Passwords don't match",
@@ -82,7 +82,7 @@ export type UserCreate = z.infer<typeof userCreateSchema>
 
 export const userSigninSchema = z.object({
    email: z.string().email('Please enter a valid email'),
-   password: z.string().optional(),
+   password: z.string(),
    rememberMe: z.boolean().optional().default(false),
 })
 

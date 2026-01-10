@@ -11,15 +11,15 @@ interface HeaderLinkProps extends LinkProps {
    }
 }
 
-export default function HeaderLink({ 
-   className, 
-   children, 
-   isSelected = false, 
+export default function HeaderLink({
+   className,
+   children,
+   isSelected = false,
    animationProps = {
-      layoutId: "underline",
-      transition: { type: 'spring', stiffness: 500, damping: 30 }
+      layoutId: 'underline',
+      transition: { type: 'spring', stiffness: 500, damping: 30 },
    },
-   ...rest 
+   ...rest
 }: HeaderLinkProps) {
    return (
       <Link

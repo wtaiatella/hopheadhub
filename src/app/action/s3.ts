@@ -23,7 +23,7 @@ export async function generatePresignedUrl(userId: string, fileType: string) {
       console.log('S3 Action: Generating presigned URL for user', userId)
       console.log('S3 Action: File type:', fileType)
       console.log('S3 Action: Using bucket:', S3_BUCKET_NAME)
-      
+
       const fileExtension = fileType === 'image/jpeg' ? 'jpg' : 'png'
       const key = `avatars/${userId}.${fileExtension}`
 
@@ -34,7 +34,7 @@ export async function generatePresignedUrl(userId: string, fileType: string) {
          ContentType: fileType,
          ACL: 'public-read', // Make the object publicly readable
       }
-      
+
       const command = new PutObjectCommand(params)
 
       const presignedUrl = await getSignedUrl(s3Client, command, { expiresIn: 600 }) // URL expires in 10 minutes
@@ -44,9 +44,9 @@ export async function generatePresignedUrl(userId: string, fileType: string) {
       return { success: true, presignedUrl, imageUrl }
    } catch (error) {
       console.error('S3 Action: Error generating presigned URL:', error)
-      return { 
-         success: false, 
-         error: error instanceof Error ? error.message : 'Failed to generate presigned URL' 
+      return {
+         success: false,
+         error: error instanceof Error ? error.message : 'Failed to generate presigned URL',
       }
    }
 }

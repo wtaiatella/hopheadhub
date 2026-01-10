@@ -1,8 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import * as crypto from 'crypto'
 import { generateJWT } from '@/lib/tokens'
-import { RegisterUserInput } from '@/types/register'
+import { UserCreate } from '@/types/user'
+import { Prisma } from '@prisma/client'
+import * as crypto from 'crypto'
+import { NextRequest, NextResponse } from 'next/server'
 
 /**
  * Hash a password with a given salt
@@ -17,7 +18,7 @@ function hashPassword(password: string, salt: string): string {
  */
 export async function PUT(request: NextRequest) {
    try {
-      const data = (await request.json()) as RegisterUserInput
+      const data = (await request.json()) as UserCreate
 
       // Check if email already exists
       const existingEmail = await prisma.email.findUnique({
@@ -36,12 +37,14 @@ export async function PUT(request: NextRequest) {
       const hashedPassword = hashPassword(data.password, salt)
 
       // Create user and email in a transaction
-      const user = await prisma.$transaction(async tx => {
+      const user = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
          // Create the user with hashed password
          const newUser = await tx.user.create({
             data: {
                name: data.name,
                nickname: data.nickname,
+               city: data.city,
+               state: data.state,
                beerInterests: data.beerInterests || [],
                hashedPassword,
                salt,
@@ -61,7 +64,7 @@ export async function PUT(request: NextRequest) {
       })
 
       // Generate JWT token
-      const token = generateJWT({ userId: user.id, email: data.email })
+      const token = await generateJWT({ userId: user.id, email: data.email })
 
       // Create response with cookie
       const response = NextResponse.json({

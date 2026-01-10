@@ -41,6 +41,8 @@ export async function updateUserEmail(email: Email) {
          isVerified: email.isVerified,
          isMain: email.isMain,
          userId: email.userId,
+         verificationToken: email.verificationToken,
+         verificationTokenExpiresAt: email.verificationTokenExpiresAt,
       }
       if (email.verificationToken) {
          updateData.verificationToken = email.verificationToken

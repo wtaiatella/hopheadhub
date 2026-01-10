@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server'
 import { prisma } from '@/lib/prisma'
-import * as crypto from 'crypto'
 import { generateJWT, verifyJWT } from '@/lib/tokens'
+import * as crypto from 'crypto'
+import { NextRequest, NextResponse } from 'next/server'
 
 /**
  * Hash a password with the given salt
@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
       }
 
       // Generate JWT token
-      const token = generateJWT({ userId: user.id, email })
+      const token = await generateJWT({ userId: user.id, email })
 
       // Create response with cookie
       const response = NextResponse.json({
@@ -100,7 +100,7 @@ export async function GET(request: NextRequest) {
 
    try {
       // Verify the JWT token
-      const payload = verifyJWT(token)
+      const payload = await verifyJWT(token)
 
       if (!payload || !payload.userId) {
          return NextResponse.json({ user: null }, { status: 401 })
