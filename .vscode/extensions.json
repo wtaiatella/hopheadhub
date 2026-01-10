@@ -1,0 +1,19 @@
+{
+  "recommendations": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "bradlc.vscode-tailwindcss",
+    "prisma.prisma",
+    "dsznajder.es7-react-js-snippets",
+    "mikestead.dotenv",
+    "formulahendry.auto-rename-tag",
+    "usernamehw.errorlens",
+    "mongodb.mongodb-vscode",
+    "eamodio.gitlens",
+    "christian-kohler.path-intellisense",
+    "wix.vscode-import-cost",
+    "rangav.vscode-thunder-client",
+    "ant-design-vue.vscode-ant-design-snippets",
+    "heybourn.headwind"
+  ]
+}
