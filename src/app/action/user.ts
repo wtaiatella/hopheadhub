@@ -22,7 +22,7 @@ export async function isUserExistsByEmail(
       return { exists: false, message: 'User does not exist' }
    } catch (error) {
       console.error('Error checking if user exists by email:', error)
-      throw new Error('Failed to check if user exists')
+      throw new Error('Failed to check if user exists') //TODO: handle error
    }
 }
 
@@ -48,7 +48,7 @@ export async function createUserProfile(
                   {
                      email: data.email,
                      isMain: true,
-                     verified: false,
+                     isVerified: false,
                   },
                ],
             },
@@ -57,7 +57,7 @@ export async function createUserProfile(
       return { success: true, message: 'User created successfully' }
    } catch (error) {
       console.error('Error creating user:', error)
-      throw new Error('Failed to create user')
+      throw new Error('Failed to create user') //TODO: handle error
    }
 }
 
@@ -84,7 +84,7 @@ export async function getUserById(
       return { success: true, message: 'User found successfully', user: userByID }
    } catch (error) {
       console.error('Error fetching user:', error)
-      throw new Error('Failed to fetch user')
+      throw new Error('Failed to fetch user') //TODO: handle error
    }
 }
 
@@ -116,7 +116,7 @@ export async function getUserByEmail(
       return { success: true, message: 'User found successfully', user: userEmail.user }
    } catch (error) {
       console.error('Error fetching user by email:', error)
-      throw new Error('Failed to fetch user')
+      throw new Error('Failed to fetch user') //TODO: handle error
    }
 }
 
@@ -128,7 +128,7 @@ export async function updateUserProfile(
    data: UserUpdate
 ): Promise<{ success: boolean; message: string; userUpdated: User | null }> {
    try {
-      const updatedUser = await prisma.user.update({
+      const updatedUser: User = await prisma.user.update({
          where: { id: userId },
          data,
       })
@@ -140,6 +140,6 @@ export async function updateUserProfile(
       return { success: true, message: 'User updated successfully', userUpdated: updatedUser }
    } catch (error) {
       console.error('Error updating user:', error)
-      throw new Error('Failed to update user profile')
+      throw new Error('Failed to update user profile') //TODO: handle error
    }
 }

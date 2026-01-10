@@ -1,6 +1,5 @@
 import jwt from 'jsonwebtoken'
 import { getJwtSecret } from '@/app/action/env'
-import { randomBytes } from 'crypto'
 
 // Token expiration time
 const EXPIRES_IN = '7d' // 7 days
@@ -59,5 +58,8 @@ export async function extractTokenFromHeader(authHeader?: string): Promise<strin
 }
 
 export function generateToken(length = 32): string {
-   return randomBytes(length).toString('hex')
+   // Use Web Crypto API instead of Node.js crypto for Edge Runtime compatibility
+   const array = new Uint8Array(length)
+   crypto.getRandomValues(array)
+   return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('')
 }

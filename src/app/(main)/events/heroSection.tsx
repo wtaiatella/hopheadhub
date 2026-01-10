@@ -62,18 +62,17 @@ export default function HeroSection() {
 
   return (
     <section>
-      <div className="relative w-[100vw-18px] h-fit ">
+      <div className="relative w-[100vw-18px] min-h-screen">
         <div className="absolute top-0 left-0 w-full h-full overflow-hidden">
           <Image
             src="/assets/event-beer-party.jpeg"
-            objectFit="cover"
             fill={true}
             alt="Beer party image"
-            className="-z-10 opacity-80 brightness-[.25]"
+            className="-z-1 opacity-80 brightness-[.25] object-cover"
           />
         </div>
 
-        <div className="container">
+        <div className="container relative z-100">
           <div
             id="heroInfo"
             className="text-white text-center justify-items-center flex flex-col items-center"
