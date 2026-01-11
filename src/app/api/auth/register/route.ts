@@ -1,7 +1,7 @@
 import { prisma } from '@/lib/prisma'
 import { generateJWT } from '@/lib/tokens'
 import { UserCreate } from '@/types/user'
-import { Prisma } from '@prisma/client'
+import type { Prisma } from '@prisma/client'
 import * as crypto from 'crypto'
 import { NextRequest, NextResponse } from 'next/server'
 
