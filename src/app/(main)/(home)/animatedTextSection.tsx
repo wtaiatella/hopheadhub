@@ -83,9 +83,9 @@ export default function AnimatedTextSection() {
    return (
       <div
          className={cn(
-            'mt-16 grid  text-primary font-serif font-semibold leading-[2rem]',
-            'sm:leading-[3rem]',
-            'lg:leading-[4rem]'
+            'mt-16 grid  text-primary font-serif font-semibold leading-8',
+            'sm:leading-12',
+            'lg:leading-16'
          )}
          id="animatedText"
       >

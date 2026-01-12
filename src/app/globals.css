@@ -1,6 +1,143 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@plugin 'tailwindcss-animate';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme {
+  --color-bole-100: #170d0a;
+  --color-bole-200: #2d1a14;
+  --color-bole-300: #44271e;
+  --color-bole-400: #553025;
+  --color-bole-500: #704031;
+  --color-bole-600: #8e513e;
+  --color-bole-700: #bb7763;
+  --color-bole-800: #d3a99c;
+  --color-bole-850: #ecdad4;
+  --color-bole-900: #f9f3f1;
+
+  --color-satin_gold-100: #231c06;
+  --color-satin_gold-200: #57450f;
+  --color-satin_gold-300: #8b6e18;
+  --color-satin_gold-400: #ad8a1f;
+  --color-satin_gold-500: #d0a525;
+  --color-satin_gold-600: #e0bd52;
+  --color-satin_gold-700: #ead186;
+  --color-satin_gold-800: #f3e4ba;
+  --color-satin_gold-900: #fcf8ee;
+
+  --color-jet-100: #09090a;
+  --color-jet-200: #131314;
+  --color-jet-300: #1c1c1e;
+  --color-jet-400: #262628;
+  --color-jet-500: #2f2f31;
+  --color-jet-600: #58585c;
+  --color-jet-700: #818186;
+  --color-jet-800: #ababae;
+  --color-jet-900: #d5d5d7;
+
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-highlight: var(--highlight);
+
+  --color-header-text: var(--header-text);
+  --color-header-menu: var(--header-menu);
+  --color-header-background: var(--header-background);
+  --color-header-hover: var(--header-hover);
+
+  --color-gradient-from: var(--gradient-from);
+  --color-gradient-to: var(--gradient-to);
+
+  --color-primary: hsl(var(--primary));
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-foreground: hsl(var(--primary-foreground));
+
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+
+  --color-card: hsl(var(--card));
+  --color-card-foreground: hsl(var(--card-foreground));
+
+  --color-popover: hsl(var(--popover));
+  --color-popover-foreground: hsl(var(--popover-foreground));
+
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+
+  --color-destructive: hsl(var(--destructive));
+  --color-destructive-foreground: hsl(var(--destructive-foreground));
+
+  --color-border: hsl(var(--border));
+  --color-input: hsl(var(--input));
+  --color-ring: hsl(var(--ring));
+
+  --color-chart-1: hsl(var(--chart-1));
+  --color-chart-2: hsl(var(--chart-2));
+  --color-chart-3: hsl(var(--chart-3));
+  --color-chart-4: hsl(var(--chart-4));
+  --color-chart-5: hsl(var(--chart-5));
+
+  --font-sans: var(--font-sans);
+  --font-serif: var(--font-serif);
+  --font-mono: var(--font-mono);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  --breakpoint-2sm: 450px;
+  --breakpoint-laptop: 1400px;
+
+  --spacing-76: 304px;
+  --spacing-114: 456px;
+  --spacing-120: 480px;
+  --spacing-header: 120px;
+  --spacing-header-sm: 100px;
+
+  --grid-template-columns-auth: 1.5fr 2fr;
+  --grid-template-columns-event: 2fr 1fr;
+
+  @keyframes accordion-down {
+    from {
+      height: 0;
+    }
+    to {
+      height: var(--radix-accordion-content-height);
+    }
+  }
+  @keyframes accordion-up {
+    from {
+      height: var(--radix-accordion-content-height);
+    }
+    to {
+      height: 0;
+    }
+  }
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
 
 @layer base {
   :root {
@@ -146,78 +283,80 @@
   }
 }
 
-.container {
-  @apply mx-auto w-full max-w-7xl px-6 md:px-8;
-}
-
-/* DatePicker custom styles */
-.custom-datepicker {
-  .ant-picker {
-    padding: 0px 3px !important;
+@layer utilities {
+  .container {
+    @apply mx-auto w-full max-w-7xl px-6 md:px-8;
   }
-  .ant-picker-input {
-    input {
-      width: 0 !important;
-      min-width: 0px !important;
+
+  /* DatePicker custom styles */
+  .custom-datepicker {
+    .ant-picker {
+      padding: 0px 3px !important;
+    }
+    .ant-picker-input {
+      input {
+        width: 0 !important;
+        min-width: 0px !important;
+      }
+    }
+    .ant-picker-suffix {
+      margin-inline-start: 0px !important;
+      color: var(--calendar-icon-color) !important;
+      svg {
+        width: var(--calendar-icon-size) !important;
+        height: var(--calendar-icon-size) !important;
+      }
     }
   }
-  .ant-picker-suffix {
-    margin-inline-start: 0px !important;
-    color: var(--calendar-icon-color) !important;
-    svg {
-      width: var(--calendar-icon-size) !important;
-      height: var(--calendar-icon-size) !important;
+
+  .user-layout {
+    .ant-menu-light {
+      background-color: var(--primary-foreground) !important;
+    }
+
+    ul {
+      background-color: var(--primary-foreground) !important;
     }
   }
-}
 
-.user-layout {
-  .ant-menu-light {
-    background-color: var(--primary-foreground) !important;
+  /* Radio Group custom styles */
+  .ant-radio-group {
+    width: 100% !important;
   }
 
-  ul {
-    background-color: var(--primary-foreground) !important;
-  }
-}
-
-/* Radio Group custom styles */
-.ant-radio-group {
-  width: 100% !important;
-}
-
-.ant-radio-wrapper {
-  width: 100% !important;
-  display: block !important;
-}
-
-/* nickname_help custom styles */
-#nickname_help {
-  @apply text-primary;
-  font-size: 12px;
-}
-
-/* Avatar uploader styles */
-.custom-avatar-uploader {
-  /* Target the ant-upload-wrapper class from ImgCrop */
-  .ant-upload-wrapper .ant-upload-select {
-    border: 2px solid var(--secondary) !important;
-    border-radius: var(--radius) !important;
-    overflow: hidden;
-    width: 150px !important;
-    height: 150px !important;
+  .ant-radio-wrapper {
+    width: 100% !important;
+    display: block !important;
   }
 
-  /* Style the upload button */
-  .ant-upload-wrapper .ant-upload-select:hover {
-    border-color: var(--primary) !important;
-    box-shadow: 0 0 0 2px rgba(var(--primary), 0.2);
+  /* nickname_help custom styles */
+  #nickname_help {
+    @apply text-primary;
+    font-size: 12px;
   }
 
-  /* Style the image container */
-  .ant-upload-wrapper .ant-upload-list-item-container {
-    border-radius: var(--radius) !important;
-    overflow: hidden;
+  /* Avatar uploader styles */
+  .custom-avatar-uploader {
+    /* Target the ant-upload-wrapper class from ImgCrop */
+    .ant-upload-wrapper .ant-upload-select {
+      border: 2px solid var(--secondary) !important;
+      border-radius: var(--radius) !important;
+      overflow: hidden;
+      width: 150px !important;
+      height: 150px !important;
+    }
+
+    /* Style the upload button */
+    .ant-upload-wrapper .ant-upload-select:hover {
+      border-color: var(--primary) !important;
+      box-shadow: 0 0 0 2px rgba(var(--primary), 0.2);
+    }
+
+    /* Style the image container */
+    .ant-upload-wrapper .ant-upload-list-item-container {
+      border-radius: var(--radius) !important;
+      overflow: hidden;
+    }
   }
 }
 
