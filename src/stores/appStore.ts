@@ -1,99 +1,42 @@
-import type { ThemeConfig } from 'antd'
-import { theme } from 'antd'
 import { create } from 'zustand'
 
 type AppState = {
-   isDarkMode: boolean
-   toggleDarkMode: () => void
-   theme: ThemeConfig
-}
-
-const bole100 = '#170d0a'
-const bole200 = '#2d1a14'
-const bole300 = '#44271e'
-const bole400 = '#553025'
-const bole500 = '#704031'
-const bole600 = '#8E513E'
-const bole700 = '#BB7763'
-const bole800 = '#D3A99C'
-const bole850 = '#ECDAD4'
-const bole900 = '#F9F3F1'
-const satinGold100 = '#231C06'
-const satinGold200 = '#57450F'
-const satinGold300 = '#8B6E18'
-const satinGold400 = '#AD8A1F'
-const satinGold500 = '#d0a525'
-const satinGold600 = '#E0BD52'
-const satinGold700 = '#EAD186'
-const satinGold800 = '#F3E4BA'
-const satinGold900 = '#FCF8EE'
-const jet100 = '#09090a'
-const jet200 = '#131314'
-const jet300 = '#1c1c1e'
-const jet400 = '#262628'
-const jet500 = '#2f2f31'
-const jet600 = '#58585c'
-const jet700 = '#818186'
-const jet800 = '#ababae'
-const jet900 = '#d5d5d7'
-
-const lightTheme: ThemeConfig = {
-   algorithm: theme.defaultAlgorithm,
-   token: {
-      colorPrimary: bole500,
-      fontFamily: 'var(--font-sans)',
-      fontFamilyCode: 'var(--font-mono)',
-   },
-   components: {
-      DatePicker: {
-         /* here is your component tokens */
-         presetsWidth: 10,
-      },
-      Layout: {
-         /* here is your component tokens */
-         headerBg: 'var(--primary)',
-         bodyBg: 'transparent',
-         siderBg: 'var(--primary)',
-      },
-      Menu: {
-         /* here is your component tokens */
-         itemSelectedBg: 'var(--sider-menu-selected-bg)',
-         itemSelectedColor: 'var(--sider-menu-selected-color)',
-         itemHoverBg: 'var(--sider-menu-hover-bg)',
-         itemHoverColor: 'var(--sider-menu-hover-color)',
-      },
-   },
-}
-
-const darkTheme: ThemeConfig = {
-   algorithm: theme.darkAlgorithm,
-   token: {
-      colorPrimary: satinGold600,
-      fontFamily: 'var(--font-sans)',
-      fontFamilyCode: 'var(--font-mono)',
-   },
+  isDarkMode: boolean
+  toggleDarkMode: () => void
 }
 
 const useAppStore = create<AppState>(set => ({
-   isDarkMode: false,
-   theme: lightTheme,
-   toggleDarkMode: () => {
-      set(state => {
-         const isDarkMode = !state.isDarkMode
-         document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light')
-         return {
-            isDarkMode: isDarkMode,
-            theme: isDarkMode ? darkTheme : lightTheme,
-         }
-      })
-   },
+  isDarkMode: false,
+  toggleDarkMode: () => {
+    set(state => {
+      const isDarkMode = !state.isDarkMode
+
+      // Atualiza o atributo data-theme para o shadcn
+      if (isDarkMode) {
+        document.documentElement.classList.add('dark')
+        document.documentElement.setAttribute('data-theme', 'dark')
+      } else {
+        document.documentElement.classList.remove('dark')
+        document.documentElement.setAttribute('data-theme', 'light')
+      }
+
+      return {
+        isDarkMode,
+      }
+    })
+  },
 }))
 
+// Inicializa o tema no carregamento
 if (typeof document !== 'undefined') {
-   document.documentElement.setAttribute(
-      'data-theme',
-      useAppStore.getState().isDarkMode ? 'dark' : 'light'
-   )
+  const isDarkMode = useAppStore.getState().isDarkMode
+  if (isDarkMode) {
+    document.documentElement.classList.add('dark')
+    document.documentElement.setAttribute('data-theme', 'dark')
+  } else {
+    document.documentElement.classList.remove('dark')
+    document.documentElement.setAttribute('data-theme', 'light')
+  }
 }
 
 export default useAppStore
