@@ -11,10 +11,10 @@ const adapter = new PrismaPg(pool)
 const globalForPrisma = global as unknown as { prisma: PrismaClient }
 
 export const prisma =
-   globalForPrisma.prisma ||
-   new PrismaClient({
-      adapter,
-      log: (await getNodeEnv()).env === 'development' ? ['query', 'error', 'warn'] : ['error'],
-   })
+  globalForPrisma.prisma ||
+  new PrismaClient({
+    adapter,
+    log: (await getNodeEnv()).env === 'development' ? ['query', 'error', 'warn'] : ['error'],
+  })
 
 if ((await getNodeEnv()).env !== 'production') globalForPrisma.prisma = prisma

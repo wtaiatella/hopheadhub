@@ -5,12 +5,12 @@ import CategorySection from './categorySection'
 import EventSection from './eventSection'
 
 export default function Events() {
-   return (
-      <main>
-         <HeroSection />
-         <CategorySection />
-         <SearchSection />
-         <EventSection />
-      </main>
-   )
+  return (
+    <main>
+      <HeroSection />
+      <CategorySection />
+      <SearchSection />
+      <EventSection />
+    </main>
+  )
 }

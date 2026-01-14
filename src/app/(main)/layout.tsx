@@ -6,15 +6,15 @@ import { Layout } from 'antd'
 const { Header, Footer, Content } = Layout
 
 export default function mainLayout({ children }: { children: React.ReactNode }) {
-   return (
-      <Layout>
-         <AppHeader />
-         <Content className="bg-background bg-[url('/assets/bg-site.jpg')] bg-repeat">
-            {children}
-         </Content>
-         <Footer>
-            <AppFooter />
-         </Footer>
-      </Layout>
-   )
+  return (
+    <Layout>
+      <AppHeader />
+      <Content className="bg-background bg-[url('/assets/bg-site.jpg')] bg-repeat">
+        {children}
+      </Content>
+      <Footer>
+        <AppFooter />
+      </Footer>
+    </Layout>
+  )
 }
