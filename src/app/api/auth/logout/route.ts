@@ -7,9 +7,9 @@ import { NextRequest, NextResponse } from 'next/server'
  * Logout the current user
  */
 export async function DELETE(request: NextRequest) {
-   const response = NextResponse.json({ success: true })
-   response.cookies.delete('auth_token')
-   return response
+  const response = NextResponse.json({ success: true })
+  response.cookies.delete('auth_token')
+  return response
 }
 
 /**
@@ -17,38 +17,38 @@ export async function DELETE(request: NextRequest) {
  * Get the current user from the JWT token
  */
 export async function GET(request: NextRequest) {
-   const token = request.cookies.get('auth_token')?.value
+  const token = request.cookies.get('auth_token')?.value
 
-   if (!token) {
+  if (!token) {
+    return NextResponse.json({ user: null }, { status: 401 })
+  }
+
+  try {
+    // Verify the JWT token
+    const payload = await verifyJWT(token)
+
+    if (!payload || !payload.userId) {
       return NextResponse.json({ user: null }, { status: 401 })
-   }
+    }
 
-   try {
-      // Verify the JWT token
-      const payload = await verifyJWT(token)
+    // Fetch the user data
+    const user = await prisma.user.findUnique({
+      where: { id: payload.userId },
+      include: {
+        emails: true,
+      },
+    })
 
-      if (!payload || !payload.userId) {
-         return NextResponse.json({ user: null }, { status: 401 })
-      }
+    if (!user) {
+      return NextResponse.json({ user: null }, { status: 401 })
+    }
 
-      // Fetch the user data
-      const user = await prisma.user.findUnique({
-         where: { id: payload.userId },
-         include: {
-            emails: true,
-         },
-      })
+    // Don't return sensitive information
+    const { hashedPassword, salt, ...safeUser } = user
 
-      if (!user) {
-         return NextResponse.json({ user: null }, { status: 401 })
-      }
-
-      // Don't return sensitive information
-      const { hashedPassword, salt, ...safeUser } = user
-
-      return NextResponse.json({ user: safeUser })
-   } catch (error) {
-      console.error('Error getting current user:', error)
-      return NextResponse.json({ user: null }, { status: 500 })
-   }
+    return NextResponse.json({ user: safeUser })
+  } catch (error) {
+    console.error('Error getting current user:', error)
+    return NextResponse.json({ user: null }, { status: 500 })
+  }
 }

@@ -7,15 +7,15 @@ import StoresSection from './storesSection'
 import RecipeSection from './recipeSection'
 
 export default function Home() {
-   return (
-      <>
-         <HeroSection />
-         <AnimatedTextSection />
-         <IllustrativeSection />
-         <EventSection />
-         <StoresSection />
-         <RecipeSection />
-         <Newsletter />
-      </>
-   )
+  return (
+    <>
+      <HeroSection />
+      <AnimatedTextSection />
+      <IllustrativeSection />
+      <EventSection />
+      <StoresSection />
+      <RecipeSection />
+      <Newsletter />
+    </>
+  )
 }
