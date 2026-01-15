@@ -59,12 +59,13 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <head>
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&family=Bitter:ital,wght@0,100..900;1,100..900&family=JetBrains+Mono:wght@100..700&display=swap"
         />
+        <title>{siteConfig.name}</title>
       </head>
       <body className="min-h-screen bg-background bg-[url('/assets/bg-site.jpg')] bg-repeat dark:bg-none transition-colors duration-200">
         <ThemeProvider>
